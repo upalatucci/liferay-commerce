@@ -44,7 +44,7 @@ describe('WrapperWithQuantity', () => {
 
 		beforeEach(() => {
 			jest.resetAllMocks();
-			jest.useFakeTimers()
+			jest.useFakeTimers();
 		});
 
 		afterEach(() => {
