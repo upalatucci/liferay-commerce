@@ -384,7 +384,7 @@ describe('AddToCartButton', () => {
 			});
 		});
 
-		it(`on '${PRODUCT_REMOVED_FROM_CART}' event, if skuId does not coincide, it leaves the 'is-added' class from the button element`, async () => {
+		it(`on '${PRODUCT_REMOVED_FROM_CART}' event, if skuId does not coincide, it leaves the 'is-added' class in the button element`, async () => {
 			let removeCBTrigger;
 
 			window.Liferay.on = jest.fn((eventName, callback) => {
@@ -416,7 +416,7 @@ describe('AddToCartButton', () => {
 
 		it(
 			`on '${CP_INSTANCE_CHANGED}' event, calls the API and, if ` +
-				'present in the order, updates the local cpInstance and renders' +
+				'present in the order, updates the local cpInstance and renders ' +
 				"the button with the 'is-added' class name",
 			async () => {
 				ServiceProvider.DeliveryCartAPI(
@@ -459,7 +459,7 @@ describe('AddToCartButton', () => {
 
 		it(
 			`on '${CP_INSTANCE_CHANGED}' event, calls the API and, if not ` +
-				'present in the order, updates the local cpInstance and renders' +
+				'present in the order, updates the local cpInstance and renders ' +
 				"the button without the 'is-added' class name",
 			async () => {
 				ServiceProvider.DeliveryCartAPI(

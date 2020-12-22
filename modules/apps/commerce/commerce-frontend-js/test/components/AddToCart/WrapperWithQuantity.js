@@ -39,6 +39,58 @@ describe('WrapperWithQuantity', () => {
 		},
 	};
 
+	describe('by interaction', () => {
+		let Component;
+
+		beforeEach(() => {
+			jest.resetAllMocks();
+			jest.useFakeTimers()
+		});
+
+		afterEach(() => {
+			cleanup();
+
+			Component = null;
+		});
+
+		it('on quantity change via QuantitySelector component, renders the button with the correctly updated quantity', async () => {
+			const settings = {
+				withQuantity: {
+					forceDropdown: true,
+				},
+			};
+
+			Component = render(
+				<WrapperWithQuantity {...{...INITIAL_PROPS, settings}} />
+			);
+
+			const QuantitySelectorSelectElement = Component.container.querySelector(
+				'select'
+			);
+			const AddToCartButtonElement = Component.container.querySelector(
+				'button'
+			);
+
+			const updatedValue = 4;
+
+			await act(async () => {
+				fireEvent.change(QuantitySelectorSelectElement, {
+					target: {value: updatedValue},
+				});
+			});
+
+			act(() => {
+				jest.runAllTimers();
+			});
+
+			await wait(() => {
+				expect(
+					AddToCartButtonElement.getAttribute('data-test-quantity')
+				).toEqual('4');
+			});
+		});
+	});
+
 	describe('by display settings', () => {
 		let Component;
 
@@ -48,6 +100,8 @@ describe('WrapperWithQuantity', () => {
 
 		afterEach(() => {
 			cleanup();
+
+			Component = null;
 		});
 
 		it('renders with the correct default class names', () => {
@@ -181,6 +235,8 @@ describe('WrapperWithQuantity', () => {
 
 		afterEach(() => {
 			cleanup();
+
+			Component = null;
 		});
 
 		it("renders a disabled select element, if no 'accountId' is provided", () => {
@@ -199,51 +255,6 @@ describe('WrapperWithQuantity', () => {
 			);
 
 			expect(QuantitySelectorSelectElement).toBeDisabled();
-		});
-	});
-
-	describe('by interaction', () => {
-		let Component;
-
-		beforeEach(() => {
-			jest.resetAllMocks();
-		});
-
-		afterEach(() => {
-			cleanup();
-		});
-
-		it('on quantity change via QuantitySelector component, renders the button with the correctly updated quantity', async () => {
-			const settings = {
-				withQuantity: {
-					forceDropdown: true,
-				},
-			};
-
-			Component = render(
-				<WrapperWithQuantity {...{...INITIAL_PROPS, settings}} />
-			);
-
-			const QuantitySelectorSelectElement = Component.container.querySelector(
-				'select'
-			);
-			const AddToCartButtonElement = Component.container.querySelector(
-				'button'
-			);
-
-			const updatedValue = 4;
-
-			await act(async () => {
-				fireEvent.change(QuantitySelectorSelectElement, {
-					target: {value: updatedValue},
-				});
-			});
-
-			await wait(() => {
-				expect(
-					AddToCartButtonElement.getAttribute('data-test-quantity')
-				).toEqual('4');
-			});
 		});
 	});
 });
