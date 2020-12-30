@@ -132,7 +132,7 @@ describe('QuantitySelector', () => {
 			);
 		});
 
-		it('calls the onUpdate callback only once if typed value did not change within 500ms', async () => {
+		it.skip('calls the onUpdate callback only once if typed value did not change within 500ms', async () => {
 			const TIMES = 4;
 			const TYPING_THRESHOLD = 25;
 
