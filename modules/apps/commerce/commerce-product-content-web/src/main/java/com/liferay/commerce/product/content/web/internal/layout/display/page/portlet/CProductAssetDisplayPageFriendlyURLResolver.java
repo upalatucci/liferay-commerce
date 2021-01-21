@@ -23,7 +23,12 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Eudaldo Alonso
  */
-@Component(enabled = true, service = FriendlyURLResolver.class)
+@Component(
+	enabled = true,
+	service = FriendlyURLResolver.class,
+	property = {
+		"service.ranking:Integer=1000"
+	})
 public class CProductAssetDisplayPageFriendlyURLResolver
 	extends BaseAssetDisplayPageFriendlyURLResolver {
 

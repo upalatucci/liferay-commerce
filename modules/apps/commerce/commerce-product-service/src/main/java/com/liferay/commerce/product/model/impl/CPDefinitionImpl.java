@@ -392,10 +392,7 @@ public class CPDefinitionImpl extends CPDefinitionBaseImpl {
 			return StringPool.BLANK;
 		}
 
-		Map<String, String> languageIdToUrlTitleMap =
-			friendlyURLEntry.getLanguageIdToUrlTitleMap();
-
-		return languageIdToUrlTitleMap.get(languageId);
+		return friendlyURLEntry.getUrlTitle(languageId);
 	}
 
 	@Override
