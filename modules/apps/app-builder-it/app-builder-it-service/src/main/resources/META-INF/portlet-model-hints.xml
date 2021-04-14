@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.liferay.app.builder.it.model.AppBuilderModule">
+		<field name="uuid" type="String" />
+		<field name="appBuilderModuleId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="active" type="boolean" />
+		<field name="name" type="String" />
+		<field localized="true" name="label" type="String" />
+		<field name="dbTableName" type="String" />
+		<field name="dbTablePKColumnName" type="String" />
+		<field name="scope" type="String" />
+		<field name="resourceName" type="String" />
+		<field name="asset" type="boolean" />
+		<field name="resource" type="boolean" />
+		<field name="expando" type="boolean" />
+	</model>
+	<model name="com.liferay.app.builder.it.model.AppBuilderModuleEntry">
+		<field name="uuid" type="String" />
+		<field name="appBuilderModuleEntryId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="appBuilderModuleId" type="long" />
+		<field name="lastPublishDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+	</model>
+	<model name="com.liferay.app.builder.it.model.AppBuilderModuleField">
+		<field name="uuid" type="String" />
+		<field name="appBuilderModuleFieldId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="appBuilderModuleId" type="long" />
+		<field name="name" type="String" />
+		<field localized="true" name="label" type="String" />
+		<field name="dbColumnName" type="String" />
+		<field name="type" type="String" />
+		<field name="typeSettings" type="String" />
+		<field name="nullable" type="boolean" />
+	</model>
+</model-hints>
