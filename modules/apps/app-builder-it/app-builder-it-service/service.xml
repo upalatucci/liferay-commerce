@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
+
+<service-builder auto-import-default-references="false" auto-namespace-tables="false" package-path="com.liferay.app.builder.it">
+	<author>Marco Leo</author>
+	<namespace>AppBuilderIt</namespace>
+	<entity local-service="true" name="AppBuilderModuleEntry" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="appBuilderModuleEntryId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" uad-anonymize-field-name="fullName" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="appBuilderModuleId" type="long" />
+		<column name="lastPublishDate" type="Date" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" uad-anonymize-field-name="fullName" />
+		<column name="statusDate" type="Date" />
+	</entity>
+	<entity local-service="true" name="AppBuilderModule" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="appBuilderModuleId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="active" type="boolean" />
+		<column name="name" type="String" />
+		<column localized="true" name="label" type="String" />
+		<column name="dbTableName" type="String" />
+		<column name="dbTablePKColumnName" type="String" />
+		<column name="scope" type="String" />
+		<column name="resourceName" type="String" />
+		<column name="asset" type="boolean" />
+		<column name="resource" type="boolean" />
+		<column name="expando" type="boolean" />
+
+		<!-- Finder methods -->
+
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="AppBuilderModuleField" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="appBuilderModuleFieldId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="appBuilderModuleId" type="long" />
+		<column name="name" type="String" />
+		<column localized="true" name="label" type="String" />
+		<column name="dbColumnName" type="String" />
+		<column name="type" type="String" />
+		<column name="typeSettings" type="String" />
+		<column name="nullable" type="boolean" />
+
+		<!-- Finder methods -->
+
+		<finder name="AppBuilderModuleId" return-type="Collection">
+			<finder-column name="appBuilderModuleId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+
+
+	<!-- TODO Add Module Rel and entry rel  Table and Block ui tables -->
+</service-builder>
