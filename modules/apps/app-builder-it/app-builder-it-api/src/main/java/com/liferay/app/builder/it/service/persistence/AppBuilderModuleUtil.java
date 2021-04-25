@@ -654,6 +654,71 @@ public class AppBuilderModuleUtil {
 	}
 
 	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or throws a <code>NoSuchAppBuilderModuleException</code> if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching app builder module
+	 * @throws NoSuchAppBuilderModuleException if a matching app builder module could not be found
+	 */
+	public static AppBuilderModule findByC_N(long companyId, String name)
+		throws com.liferay.app.builder.it.exception.
+			NoSuchAppBuilderModuleException {
+
+		return getPersistence().findByC_N(companyId, name);
+	}
+
+	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching app builder module, or <code>null</code> if a matching app builder module could not be found
+	 */
+	public static AppBuilderModule fetchByC_N(long companyId, String name) {
+		return getPersistence().fetchByC_N(companyId, name);
+	}
+
+	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching app builder module, or <code>null</code> if a matching app builder module could not be found
+	 */
+	public static AppBuilderModule fetchByC_N(
+		long companyId, String name, boolean useFinderCache) {
+
+		return getPersistence().fetchByC_N(companyId, name, useFinderCache);
+	}
+
+	/**
+	 * Removes the app builder module where companyId = &#63; and name = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the app builder module that was removed
+	 */
+	public static AppBuilderModule removeByC_N(long companyId, String name)
+		throws com.liferay.app.builder.it.exception.
+			NoSuchAppBuilderModuleException {
+
+		return getPersistence().removeByC_N(companyId, name);
+	}
+
+	/**
+	 * Returns the number of app builder modules where companyId = &#63; and name = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the number of matching app builder modules
+	 */
+	public static int countByC_N(long companyId, String name) {
+		return getPersistence().countByC_N(companyId, name);
+	}
+
+	/**
 	 * Caches the app builder module in the entity cache if it is enabled.
 	 *
 	 * @param appBuilderModule the app builder module

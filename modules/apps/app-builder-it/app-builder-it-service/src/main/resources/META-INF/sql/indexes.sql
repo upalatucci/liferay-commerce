@@ -1,4 +1,4 @@
-create index IX_C0ECA4FC on AppBuilderModule (companyId);
+create unique index IX_551E47BB on AppBuilderModule (companyId, name[$COLUMN_LENGTH:75$]);
 create index IX_7B4D0AA0 on AppBuilderModule (uuid_[$COLUMN_LENGTH:75$], companyId);
 
 create index IX_388D00E6 on AppBuilderModuleEntry (uuid_[$COLUMN_LENGTH:75$], companyId);

@@ -284,6 +284,16 @@ public class AppBuilderModuleLocalServiceWrapper
 			appBuilderModuleId);
 	}
 
+	@Override
+	public com.liferay.app.builder.it.model.AppBuilderModule
+			getAppBuilderModuleByName(long companyId, String name)
+		throws com.liferay.app.builder.it.exception.
+			NoSuchAppBuilderModuleException {
+
+		return _appBuilderModuleLocalService.getAppBuilderModuleByName(
+			companyId, name);
+	}
+
 	/**
 	 * Returns the app builder module with the matching UUID and company.
 	 *

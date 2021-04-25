@@ -1718,6 +1718,253 @@ public class AppBuilderModulePersistenceImpl
 	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 =
 		"appBuilderModule.companyId = ?";
 
+	private FinderPath _finderPathFetchByC_N;
+	private FinderPath _finderPathCountByC_N;
+
+	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or throws a <code>NoSuchAppBuilderModuleException</code> if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching app builder module
+	 * @throws NoSuchAppBuilderModuleException if a matching app builder module could not be found
+	 */
+	@Override
+	public AppBuilderModule findByC_N(long companyId, String name)
+		throws NoSuchAppBuilderModuleException {
+
+		AppBuilderModule appBuilderModule = fetchByC_N(companyId, name);
+
+		if (appBuilderModule == null) {
+			StringBundler sb = new StringBundler(6);
+
+			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			sb.append("companyId=");
+			sb.append(companyId);
+
+			sb.append(", name=");
+			sb.append(name);
+
+			sb.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(sb.toString());
+			}
+
+			throw new NoSuchAppBuilderModuleException(sb.toString());
+		}
+
+		return appBuilderModule;
+	}
+
+	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching app builder module, or <code>null</code> if a matching app builder module could not be found
+	 */
+	@Override
+	public AppBuilderModule fetchByC_N(long companyId, String name) {
+		return fetchByC_N(companyId, name, true);
+	}
+
+	/**
+	 * Returns the app builder module where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching app builder module, or <code>null</code> if a matching app builder module could not be found
+	 */
+	@Override
+	public AppBuilderModule fetchByC_N(
+		long companyId, String name, boolean useFinderCache) {
+
+		name = Objects.toString(name, "");
+
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {companyId, name};
+		}
+
+		Object result = null;
+
+		if (useFinderCache) {
+			result = finderCache.getResult(_finderPathFetchByC_N, finderArgs);
+		}
+
+		if (result instanceof AppBuilderModule) {
+			AppBuilderModule appBuilderModule = (AppBuilderModule)result;
+
+			if ((companyId != appBuilderModule.getCompanyId()) ||
+				!Objects.equals(name, appBuilderModule.getName())) {
+
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append(_SQL_SELECT_APPBUILDERMODULE_WHERE);
+
+			sb.append(_FINDER_COLUMN_C_N_COMPANYID_2);
+
+			boolean bindName = false;
+
+			if (name.isEmpty()) {
+				sb.append(_FINDER_COLUMN_C_N_NAME_3);
+			}
+			else {
+				bindName = true;
+
+				sb.append(_FINDER_COLUMN_C_N_NAME_2);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(companyId);
+
+				if (bindName) {
+					queryPos.add(name);
+				}
+
+				List<AppBuilderModule> list = query.list();
+
+				if (list.isEmpty()) {
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByC_N, finderArgs, list);
+					}
+				}
+				else {
+					AppBuilderModule appBuilderModule = list.get(0);
+
+					result = appBuilderModule;
+
+					cacheResult(appBuilderModule);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (AppBuilderModule)result;
+		}
+	}
+
+	/**
+	 * Removes the app builder module where companyId = &#63; and name = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the app builder module that was removed
+	 */
+	@Override
+	public AppBuilderModule removeByC_N(long companyId, String name)
+		throws NoSuchAppBuilderModuleException {
+
+		AppBuilderModule appBuilderModule = findByC_N(companyId, name);
+
+		return remove(appBuilderModule);
+	}
+
+	/**
+	 * Returns the number of app builder modules where companyId = &#63; and name = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the number of matching app builder modules
+	 */
+	@Override
+	public int countByC_N(long companyId, String name) {
+		name = Objects.toString(name, "");
+
+		FinderPath finderPath = _finderPathCountByC_N;
+
+		Object[] finderArgs = new Object[] {companyId, name};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(3);
+
+			sb.append(_SQL_COUNT_APPBUILDERMODULE_WHERE);
+
+			sb.append(_FINDER_COLUMN_C_N_COMPANYID_2);
+
+			boolean bindName = false;
+
+			if (name.isEmpty()) {
+				sb.append(_FINDER_COLUMN_C_N_NAME_3);
+			}
+			else {
+				bindName = true;
+
+				sb.append(_FINDER_COLUMN_C_N_NAME_2);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(companyId);
+
+				if (bindName) {
+					queryPos.add(name);
+				}
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_C_N_COMPANYID_2 =
+		"appBuilderModule.companyId = ? AND ";
+
+	private static final String _FINDER_COLUMN_C_N_NAME_2 =
+		"appBuilderModule.name = ?";
+
+	private static final String _FINDER_COLUMN_C_N_NAME_3 =
+		"(appBuilderModule.name IS NULL OR appBuilderModule.name = '')";
+
 	public AppBuilderModulePersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -1743,6 +1990,13 @@ public class AppBuilderModulePersistenceImpl
 	public void cacheResult(AppBuilderModule appBuilderModule) {
 		entityCache.putResult(
 			AppBuilderModuleImpl.class, appBuilderModule.getPrimaryKey(),
+			appBuilderModule);
+
+		finderCache.putResult(
+			_finderPathFetchByC_N,
+			new Object[] {
+				appBuilderModule.getCompanyId(), appBuilderModule.getName()
+			},
 			appBuilderModule);
 	}
 
@@ -1804,6 +2058,19 @@ public class AppBuilderModulePersistenceImpl
 		for (Serializable primaryKey : primaryKeys) {
 			entityCache.removeResult(AppBuilderModuleImpl.class, primaryKey);
 		}
+	}
+
+	protected void cacheUniqueFindersCache(
+		AppBuilderModuleModelImpl appBuilderModuleModelImpl) {
+
+		Object[] args = new Object[] {
+			appBuilderModuleModelImpl.getCompanyId(),
+			appBuilderModuleModelImpl.getName()
+		};
+
+		finderCache.putResult(_finderPathCountByC_N, args, Long.valueOf(1));
+		finderCache.putResult(
+			_finderPathFetchByC_N, args, appBuilderModuleModelImpl);
 	}
 
 	/**
@@ -1991,6 +2258,8 @@ public class AppBuilderModulePersistenceImpl
 
 		entityCache.putResult(
 			AppBuilderModuleImpl.class, appBuilderModuleModelImpl, false, true);
+
+		cacheUniqueFindersCache(appBuilderModuleModelImpl);
 
 		if (isNew) {
 			appBuilderModule.setNew(false);
@@ -2335,6 +2604,16 @@ public class AppBuilderModulePersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyId",
 			new String[] {Long.class.getName()}, new String[] {"companyId"},
 			false);
+
+		_finderPathFetchByC_N = new FinderPath(
+			FINDER_CLASS_NAME_ENTITY, "fetchByC_N",
+			new String[] {Long.class.getName(), String.class.getName()},
+			new String[] {"companyId", "name"}, true);
+
+		_finderPathCountByC_N = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_N",
+			new String[] {Long.class.getName(), String.class.getName()},
+			new String[] {"companyId", "name"}, false);
 	}
 
 	@Deactivate

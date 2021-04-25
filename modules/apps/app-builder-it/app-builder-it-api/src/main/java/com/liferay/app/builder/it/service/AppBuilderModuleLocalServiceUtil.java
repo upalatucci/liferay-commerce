@@ -256,6 +256,14 @@ public class AppBuilderModuleLocalServiceUtil {
 		return getService().getAppBuilderModule(appBuilderModuleId);
 	}
 
+	public static AppBuilderModule getAppBuilderModuleByName(
+			long companyId, String name)
+		throws com.liferay.app.builder.it.exception.
+			NoSuchAppBuilderModuleException {
+
+		return getService().getAppBuilderModuleByName(companyId, name);
+	}
+
 	/**
 	 * Returns the app builder module with the matching UUID and company.
 	 *

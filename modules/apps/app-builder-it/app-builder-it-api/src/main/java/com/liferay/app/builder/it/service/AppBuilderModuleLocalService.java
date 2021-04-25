@@ -14,6 +14,7 @@
 
 package com.liferay.app.builder.it.service;
 
+import com.liferay.app.builder.it.exception.NoSuchAppBuilderModuleException;
 import com.liferay.app.builder.it.model.AppBuilderModule;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
@@ -230,6 +231,11 @@ public interface AppBuilderModuleLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AppBuilderModule getAppBuilderModule(long appBuilderModuleId)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AppBuilderModule getAppBuilderModuleByName(
+			long companyId, String name)
+		throws NoSuchAppBuilderModuleException;
 
 	/**
 	 * Returns the app builder module with the matching UUID and company.
