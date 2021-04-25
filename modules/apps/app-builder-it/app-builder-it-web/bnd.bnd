@@ -1,0 +1,4 @@
+Bundle-Name: Liferay App Builder IT Web
+Bundle-SymbolicName: com.liferay.app.builder.it.web
+Bundle-Version: 1.0.0
+Web-ContextPath: /app-builder-it-web
