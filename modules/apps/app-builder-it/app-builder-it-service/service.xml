@@ -63,6 +63,10 @@
 		<finder name="CompanyId" return-type="Collection">
 			<finder-column name="companyId" />
 		</finder>
+		<finder name="C_N" return-type="AppBuilderModule" unique="true">
+			<finder-column name="companyId" />
+			<finder-column name="name" />
+		</finder>
 
 		<!-- References -->
 

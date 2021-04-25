@@ -14,6 +14,7 @@
 
 package com.liferay.app.builder.it.service.impl;
 
+import com.liferay.app.builder.it.exception.NoSuchAppBuilderModuleException;
 import com.liferay.app.builder.it.model.AppBuilderModule;
 import com.liferay.app.builder.it.service.base.AppBuilderModuleLocalServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
@@ -72,6 +73,14 @@ public class AppBuilderModuleLocalServiceImpl
 			"custom_" + user.getCompanyId() + "_" + dbTableName);
 
 		return appBuilderModulePersistence.update(appBuilderModule);
+	}
+
+
+	@Override
+	public AppBuilderModule getAppBuilderModuleByName(long companyId, String name)
+		throws NoSuchAppBuilderModuleException {
+
+		return appBuilderModulePersistence.findByC_N(companyId, name);
 	}
 
 	public List<AppBuilderModule> getAppBuilderModules() {
