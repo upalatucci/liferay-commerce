@@ -55,6 +55,9 @@ public class AppBuilderModuleEntryModelDocumentContributor
 					appBuilderModule);
 
 			document.addKeyword(
+				"appBuilderModuleId", appBuilderModule.getAppBuilderModuleId());
+
+			document.addKeyword(
 				"moduleName", appBuilderModule.getDbTableName());
 
 			//TODO parse teh metadate not the json object
