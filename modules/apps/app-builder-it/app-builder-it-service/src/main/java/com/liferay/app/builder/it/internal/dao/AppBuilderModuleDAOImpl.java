@@ -116,10 +116,22 @@ public class AppBuilderModuleDAOImpl implements AppBuilderModuleDAO {
 								return Optional.empty();
 							}
 
-							Object[] objects = rows.get(0);
-
 							JSONObject jsonObject =
 								_jsonFactory.createJSONObject();
+
+							if(!rows.getClass().isArray()){
+								Object object = (Object)rows.get(0);
+
+								Column column = (Column)selectExpression[0];
+
+								_fillJSONObject(
+									column.getJavaType(), column.getName(),
+									object, jsonObject);
+
+								return Optional.of(jsonObject);
+							}
+
+							Object[] objects = rows.get(0);
 
 							for (int i = 0; i < selectExpression.length; i++) {
 								Column column = (Column)selectExpression[i];
@@ -330,12 +342,10 @@ public class AppBuilderModuleDAOImpl implements AppBuilderModuleDAO {
 	}
 
 	public void setColumn(
-			PreparedStatement ps, int index, Integer type, String value)
+			PreparedStatement ps, int paramIndex, Integer type, String value)
 		throws Exception {
 
 		int t = type.intValue();
-
-		int paramIndex = index + 1;
 
 		if (t == Types.BIGINT) {
 			ps.setLong(paramIndex, GetterUtil.getLong(value));
