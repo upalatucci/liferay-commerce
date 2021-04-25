@@ -2,6 +2,7 @@ Bundle-Name: Liferay App Builder IT API
 Bundle-SymbolicName: com.liferay.app.builder.it.api
 Bundle-Version: 1.0.0
 Export-Package:\
+	com.liferay.app.builder.it.constants,\
 	com.liferay.app.builder.it.dao,\
 	com.liferay.app.builder.it.exception,\
 	com.liferay.app.builder.it.model,\
