@@ -1,0 +1,3 @@
+Bundle-Name: Liferay App Builder Headless IT Impl
+Bundle-SymbolicName: com.liferay.app.builder.it.headless.impl
+Bundle-Version: 1.0.0
