@@ -17,9 +17,9 @@ package com.liferay.object.service.impl;
 import com.liferay.object.deployer.ObjectDefinitionDeployer;
 import com.liferay.object.exception.DuplicateObjectDefinitionException;
 import com.liferay.object.exception.ObjectDefinitionNameException;
+import com.liferay.object.exception.SystemObjectDefinitionException;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.model.ObjectDefinition;
-import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -65,7 +65,8 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Override
 	public ObjectDefinition addObjectDefinition(
-			long userId, String name, List<ObjectField> objectFields)
+			long userId, String name, List<ObjectField> objectFields,
+			boolean system)
 		throws PortalException {
 
 		User user = _userLocalService.getUser(userId);
@@ -82,6 +83,7 @@ public class ObjectDefinitionLocalServiceImpl
 		objectDefinition.setUserId(user.getUserId());
 		objectDefinition.setUserName(user.getFullName());
 		objectDefinition.setName(name);
+		objectDefinition.setSystem(system);
 
 		ObjectDefinition updatedObjectDefinition =
 			objectDefinitionPersistence.update(objectDefinition);
@@ -125,7 +127,9 @@ public class ObjectDefinitionLocalServiceImpl
 			ObjectDefinition objectDefinition)
 		throws PortalException {
 
-		long objectDefinitionId = objectDefinition.getObjectDefinitionId();
+		if (objectDefinition.isSystem()) {
+			throw new SystemObjectDefinitionException();
+		}
 
 		List<ObjectEntry> objectEntries =
 			_objectEntryPersistence.findByObjectDefinitionId(
@@ -169,6 +173,14 @@ public class ObjectDefinitionLocalServiceImpl
 				objectDefinitionId -> objectDefinitionDeployer.deploy(
 					objectDefinition));
 		}
+	}
+
+	@Override
+	public ObjectDefinition fetchObjectDefinitionByC_N_V(
+		long companyId, String name, double version) {
+
+		return objectDefinitionPersistence.fetchByC_N_V(
+			companyId, name, version);
 	}
 
 	@Override
@@ -285,6 +297,56 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 	}
 
+	@Override
+	public ObjectDefinition updateObjectDefinition(
+			long userId, long objectDefinitionId,
+			List<ObjectField> objectFields, double version)
+		throws PortalException {
+
+		ObjectDefinition objectDefinition =
+			objectDefinitionPersistence.fetchByPrimaryKey(objectDefinitionId);
+
+		objectDefinition.setVersion(version);
+
+		objectDefinition = objectDefinitionPersistence.update(objectDefinition);
+
+		//TODO this logic can be improved, I am avoiding in removing all
+
+		// entries from the database and recreate it, as I don't want to lose
+		// the original id
+
+		List<ObjectField> savedObjectFields =
+			_objectFieldLocalService.getObjectFields(objectDefinitionId);
+
+		for (ObjectField objectField : objectFields) {
+			ObjectField objectField1 = _objectFieldPersistence.fetchByODI_N(
+				objectDefinitionId, objectField.getName());
+
+			if (objectField1 == null) {
+				_objectFieldLocalService.addObjectField(
+					userId, objectDefinitionId, objectField.getIndexed(),
+					objectField.getIndexedAsKeyword(),
+					objectField.getIndexedLanguageId(), objectField.getName(),
+					objectField.getType());
+			}
+			else {
+				savedObjectFields.remove(objectField1);
+
+				_objectFieldLocalService.addObjectField(
+					userId, objectDefinitionId, objectField.getIndexed(),
+					objectField.getIndexedAsKeyword(),
+					objectField.getIndexedLanguageId(), objectField.getName(),
+					objectField.getType());
+			}
+		}
+
+		for (ObjectField objectField : savedObjectFields) {
+			_objectFieldLocalService.deleteObjectField(objectField);
+		}
+
+		return objectDefinition;
+	}
+
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_bundleContext = bundleContext;
@@ -345,7 +407,7 @@ public class ObjectDefinitionLocalServiceImpl
 				"Names must be less than 41 characters");
 		}
 
-		if (objectDefinitionPersistence.fetchByC_N(companyId, name) != null) {
+		if (objectDefinitionPersistence.countByC_N(companyId, name) > 0) {
 			throw new DuplicateObjectDefinitionException(
 				"Duplicate name " + name);
 		}
