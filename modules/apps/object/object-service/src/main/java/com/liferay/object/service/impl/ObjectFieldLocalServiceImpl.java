@@ -83,9 +83,47 @@ public class ObjectFieldLocalServiceImpl
 	}
 
 	@Override
+	public ObjectField deleteObjectField(long objectFieldId)
+		throws PortalException {
+
+		ObjectField objectField = objectFieldPersistence.findByPrimaryKey(
+			objectFieldId);
+
+		return deleteObjectField(objectField);
+	}
+
+	@Override
+	public ObjectField deleteObjectField(ObjectField objectField)
+		throws PortalException {
+
+		return objectFieldPersistence.remove(objectField);
+	}
+
+	@Override
 	public List<ObjectField> getObjectFields(long objectDefinitionId) {
 		return objectFieldPersistence.findByObjectDefinitionId(
 			objectDefinitionId);
+	}
+
+	@Override
+	public ObjectField updateObjectField(
+			long objectFieldId, boolean indexed, boolean indexedAsKeyword,
+			String indexedLanguageId, String type)
+		throws PortalException {
+
+		_validateIndexed(indexed, indexedAsKeyword, indexedLanguageId, type);
+
+		_validateType(type);
+
+		ObjectField objectField = objectFieldPersistence.fetchByPrimaryKey(
+			objectFieldId);
+
+		objectField.setIndexed(indexed);
+		objectField.setIndexedAsKeyword(indexedAsKeyword);
+		objectField.setIndexedLanguageId(indexedLanguageId);
+		objectField.setType(type);
+
+		return objectFieldPersistence.update(objectField);
 	}
 
 	private void _validateIndexed(
