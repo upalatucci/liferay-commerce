@@ -21,6 +21,8 @@
 		<!-- Other fields -->
 
 		<column name="name" type="String" />
+		<column name="system" type="boolean" />
+		<column name="version" type="double" />
 
 		<!-- Finder methods -->
 
