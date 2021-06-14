@@ -131,13 +131,9 @@ public class ObjectDefinitionLocalServiceImpl
 			throw new SystemObjectDefinitionException();
 		}
 
-		List<ObjectEntry> objectEntries =
-			_objectEntryPersistence.findByObjectDefinitionId(
-				objectDefinitionId);
+		long objectDefinitionId = objectDefinition.getObjectDefinitionId();
 
-		for (ObjectEntry objectEntry : objectEntries) {
-			_objectEntryLocalService.deleteObjectEntry(objectEntry);
-		}
+		_objectEntryPersistence.removeByObjectDefinitionId(objectDefinitionId);
 
 		_objectFieldPersistence.removeByObjectDefinitionId(objectDefinitionId);
 
