@@ -46,10 +46,12 @@ public class ObjectDefinitionLocalServiceUtil {
 	 */
 	public static ObjectDefinition addObjectDefinition(
 			long userId, String name,
-			List<com.liferay.object.model.ObjectField> objectFields)
+			List<com.liferay.object.model.ObjectField> objectFields,
+			boolean system)
 		throws PortalException {
 
-		return getService().addObjectDefinition(userId, name, objectFields);
+		return getService().addObjectDefinition(
+			userId, name, objectFields, system);
 	}
 
 	/**
@@ -233,6 +235,13 @@ public class ObjectDefinitionLocalServiceUtil {
 		return getService().fetchObjectDefinition(objectDefinitionId);
 	}
 
+	public static ObjectDefinition fetchObjectDefinitionByC_N_V(
+		long companyId, String name, double version) {
+
+		return getService().fetchObjectDefinitionByC_N_V(
+			companyId, name, version);
+	}
+
 	/**
 	 * Returns the object definition with the matching UUID and company.
 	 *
@@ -349,6 +358,16 @@ public class ObjectDefinitionLocalServiceUtil {
 
 	public static void undeployObjectDefinition(long objectDefinitionId) {
 		getService().undeployObjectDefinition(objectDefinitionId);
+	}
+
+	public static ObjectDefinition updateObjectDefinition(
+			long userId, long objectDefinitionId,
+			List<com.liferay.object.model.ObjectField> objectFields,
+			double version)
+		throws PortalException {
+
+		return getService().updateObjectDefinition(
+			userId, objectDefinitionId, objectFields, version);
 	}
 
 	/**

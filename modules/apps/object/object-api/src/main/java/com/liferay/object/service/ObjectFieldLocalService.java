@@ -121,9 +121,11 @@ public interface ObjectFieldLocalService
 	 *
 	 * @param objectField the object field
 	 * @return the object field that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
-	public ObjectField deleteObjectField(ObjectField objectField);
+	public ObjectField deleteObjectField(ObjectField objectField)
+		throws PortalException;
 
 	/**
 	 * @throws PortalException
@@ -290,6 +292,11 @@ public interface ObjectFieldLocalService
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	public ObjectField updateObjectField(
+			long objectFieldId, boolean indexed, boolean indexedAsKeyword,
+			String indexedLanguageId, String type)
 		throws PortalException;
 
 	/**

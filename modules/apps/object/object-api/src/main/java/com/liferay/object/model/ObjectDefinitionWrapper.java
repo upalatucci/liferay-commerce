@@ -52,6 +52,8 @@ public class ObjectDefinitionWrapper
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("name", getName());
+		attributes.put("system", isSystem());
+		attributes.put("version", getVersion());
 
 		return attributes;
 	}
@@ -110,6 +112,18 @@ public class ObjectDefinitionWrapper
 
 		if (name != null) {
 			setName(name);
+		}
+
+		Boolean system = (Boolean)attributes.get("system");
+
+		if (system != null) {
+			setSystem(system);
+		}
+
+		Double version = (Double)attributes.get("version");
+
+		if (version != null) {
+			setVersion(version);
 		}
 	}
 
@@ -214,6 +228,16 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Returns the system of this object definition.
+	 *
+	 * @return the system of this object definition
+	 */
+	@Override
+	public boolean getSystem() {
+		return model.getSystem();
+	}
+
+	/**
 	 * Returns the user ID of this object definition.
 	 *
 	 * @return the user ID of this object definition
@@ -251,6 +275,26 @@ public class ObjectDefinitionWrapper
 	@Override
 	public String getUuid() {
 		return model.getUuid();
+	}
+
+	/**
+	 * Returns the version of this object definition.
+	 *
+	 * @return the version of this object definition
+	 */
+	@Override
+	public double getVersion() {
+		return model.getVersion();
+	}
+
+	/**
+	 * Returns <code>true</code> if this object definition is system.
+	 *
+	 * @return <code>true</code> if this object definition is system; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isSystem() {
+		return model.isSystem();
 	}
 
 	@Override
@@ -329,6 +373,16 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
+	 * Sets whether this object definition is system.
+	 *
+	 * @param system the system of this object definition
+	 */
+	@Override
+	public void setSystem(boolean system) {
+		model.setSystem(system);
+	}
+
+	/**
 	 * Sets the user ID of this object definition.
 	 *
 	 * @param userId the user ID of this object definition
@@ -366,6 +420,16 @@ public class ObjectDefinitionWrapper
 	@Override
 	public void setUuid(String uuid) {
 		model.setUuid(uuid);
+	}
+
+	/**
+	 * Sets the version of this object definition.
+	 *
+	 * @param version the version of this object definition
+	 */
+	@Override
+	public void setVersion(double version) {
+		model.setVersion(version);
 	}
 
 	@Override

@@ -219,4 +219,39 @@ public interface ObjectDefinitionModel
 	 */
 	public void setName(String name);
 
+	/**
+	 * Returns the system of this object definition.
+	 *
+	 * @return the system of this object definition
+	 */
+	public boolean getSystem();
+
+	/**
+	 * Returns <code>true</code> if this object definition is system.
+	 *
+	 * @return <code>true</code> if this object definition is system; <code>false</code> otherwise
+	 */
+	public boolean isSystem();
+
+	/**
+	 * Sets whether this object definition is system.
+	 *
+	 * @param system the system of this object definition
+	 */
+	public void setSystem(boolean system);
+
+	/**
+	 * Returns the version of this object definition.
+	 *
+	 * @return the version of this object definition
+	 */
+	public double getVersion();
+
+	/**
+	 * Sets the version of this object definition.
+	 *
+	 * @param version the version of this object definition
+	 */
+	public void setVersion(double version);
+
 }

@@ -66,7 +66,8 @@ public interface ObjectDefinitionLocalService
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.object.service.impl.ObjectDefinitionLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the object definition local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link ObjectDefinitionLocalServiceUtil} if injection and service tracking are not available.
 	 */
 	public ObjectDefinition addObjectDefinition(
-			long userId, String name, List<ObjectField> objectFields)
+			long userId, String name, List<ObjectField> objectFields,
+			boolean system)
 		throws PortalException;
 
 	/**
@@ -214,6 +215,10 @@ public interface ObjectDefinitionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ObjectDefinition fetchObjectDefinition(long objectDefinitionId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectDefinition fetchObjectDefinitionByC_N_V(
+		long companyId, String name, double version);
+
 	/**
 	 * Returns the object definition with the matching UUID and company.
 	 *
@@ -301,6 +306,11 @@ public interface ObjectDefinitionLocalService
 
 	@Clusterable
 	public void undeployObjectDefinition(long objectDefinitionId);
+
+	public ObjectDefinition updateObjectDefinition(
+			long userId, long objectDefinitionId,
+			List<ObjectField> objectFields, double version)
+		throws PortalException;
 
 	/**
 	 * Updates the object definition in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

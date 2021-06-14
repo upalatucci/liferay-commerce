@@ -118,7 +118,7 @@ public class ObjectDefinitionLocalServiceTest {
 
 		ObjectDefinitionLocalServiceUtil.addObjectDefinition(
 			TestPropsValues.getUserId(), "Test",
-			Collections.<ObjectField>emptyList());
+			Collections.<ObjectField>emptyList(), false);
 
 		try {
 			_testAddObjectDefinition("Test");
@@ -139,7 +139,7 @@ public class ObjectDefinitionLocalServiceTest {
 			objectDefinition =
 				ObjectDefinitionLocalServiceUtil.addObjectDefinition(
 					TestPropsValues.getUserId(), name,
-					Collections.<ObjectField>emptyList());
+					Collections.<ObjectField>emptyList(), false);
 		}
 		finally {
 			if (objectDefinition != null) {

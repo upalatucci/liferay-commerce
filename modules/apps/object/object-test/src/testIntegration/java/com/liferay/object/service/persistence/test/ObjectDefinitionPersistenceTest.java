@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -140,6 +141,10 @@ public class ObjectDefinitionPersistenceTest {
 
 		newObjectDefinition.setName(RandomTestUtil.randomString());
 
+		newObjectDefinition.setSystem(RandomTestUtil.randomBoolean());
+
+		newObjectDefinition.setVersion(RandomTestUtil.nextDouble());
+
 		_objectDefinitions.add(_persistence.update(newObjectDefinition));
 
 		ObjectDefinition existingObjectDefinition =
@@ -170,6 +175,12 @@ public class ObjectDefinitionPersistenceTest {
 			Time.getShortTimestamp(newObjectDefinition.getModifiedDate()));
 		Assert.assertEquals(
 			existingObjectDefinition.getName(), newObjectDefinition.getName());
+		Assert.assertEquals(
+			existingObjectDefinition.isSystem(),
+			newObjectDefinition.isSystem());
+		AssertUtils.assertEquals(
+			existingObjectDefinition.getVersion(),
+			newObjectDefinition.getVersion());
 	}
 
 	@Test
@@ -207,6 +218,16 @@ public class ObjectDefinitionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_N_V() throws Exception {
+		_persistence.countByC_N_V(
+			RandomTestUtil.nextLong(), "", RandomTestUtil.nextDouble());
+
+		_persistence.countByC_N_V(0L, "null", 0D);
+
+		_persistence.countByC_N_V(0L, (String)null, 0D);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		ObjectDefinition newObjectDefinition = addObjectDefinition();
 
@@ -234,7 +255,7 @@ public class ObjectDefinitionPersistenceTest {
 			"ObjectDefinition", "mvccVersion", true, "uuid", true,
 			"objectDefinitionId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true, "name",
-			true);
+			true, "system", true, "version", true);
 	}
 
 	@Test
@@ -516,6 +537,11 @@ public class ObjectDefinitionPersistenceTest {
 			ReflectionTestUtil.invoke(
 				objectDefinition, "getColumnOriginalValue",
 				new Class<?>[] {String.class}, "name"));
+		AssertUtils.assertEquals(
+			objectDefinition.getVersion(),
+			ReflectionTestUtil.<Double>invoke(
+				objectDefinition, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "version"));
 	}
 
 	protected ObjectDefinition addObjectDefinition() throws Exception {
@@ -538,6 +564,10 @@ public class ObjectDefinitionPersistenceTest {
 		objectDefinition.setModifiedDate(RandomTestUtil.nextDate());
 
 		objectDefinition.setName(RandomTestUtil.randomString());
+
+		objectDefinition.setSystem(RandomTestUtil.randomBoolean());
+
+		objectDefinition.setVersion(RandomTestUtil.nextDouble());
 
 		_objectDefinitions.add(_persistence.update(objectDefinition));
 

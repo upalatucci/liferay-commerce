@@ -79,7 +79,8 @@ public class ObjectDefinitionModelImpl
 		{"objectDefinitionId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"name", Types.VARCHAR}
+		{"name", Types.VARCHAR}, {"system_", Types.BOOLEAN},
+		{"version", Types.DOUBLE}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -95,10 +96,12 @@ public class ObjectDefinitionModelImpl
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("system_", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("version", Types.DOUBLE);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ObjectDefinition (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectDefinitionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name VARCHAR(75) null)";
+		"create table ObjectDefinition (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectDefinitionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name VARCHAR(75) null,system_ BOOLEAN,version DOUBLE)";
 
 	public static final String TABLE_SQL_DROP = "drop table ObjectDefinition";
 
@@ -131,6 +134,12 @@ public class ObjectDefinitionModelImpl
 	 */
 	@Deprecated
 	public static final long UUID_COLUMN_BITMASK = 4L;
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
+	 */
+	@Deprecated
+	public static final long VERSION_COLUMN_BITMASK = 8L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -170,6 +179,8 @@ public class ObjectDefinitionModelImpl
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setName(soapModel.getName());
+		model.setSystem(soapModel.isSystem());
+		model.setVersion(soapModel.getVersion());
 
 		return model;
 	}
@@ -371,6 +382,14 @@ public class ObjectDefinitionModelImpl
 		attributeSetterBiConsumers.put(
 			"name",
 			(BiConsumer<ObjectDefinition, String>)ObjectDefinition::setName);
+		attributeGetterFunctions.put("system", ObjectDefinition::getSystem);
+		attributeSetterBiConsumers.put(
+			"system",
+			(BiConsumer<ObjectDefinition, Boolean>)ObjectDefinition::setSystem);
+		attributeGetterFunctions.put("version", ObjectDefinition::getVersion);
+		attributeSetterBiConsumers.put(
+			"version",
+			(BiConsumer<ObjectDefinition, Double>)ObjectDefinition::setVersion);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -578,6 +597,52 @@ public class ObjectDefinitionModelImpl
 		return getColumnOriginalValue("name");
 	}
 
+	@JSON
+	@Override
+	public boolean getSystem() {
+		return _system;
+	}
+
+	@JSON
+	@Override
+	public boolean isSystem() {
+		return _system;
+	}
+
+	@Override
+	public void setSystem(boolean system) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_system = system;
+	}
+
+	@JSON
+	@Override
+	public double getVersion() {
+		return _version;
+	}
+
+	@Override
+	public void setVersion(double version) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_version = version;
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getColumnOriginalValue(String)}
+	 */
+	@Deprecated
+	public double getOriginalVersion() {
+		return GetterUtil.getDouble(
+			this.<Double>getColumnOriginalValue("version"));
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -649,6 +714,8 @@ public class ObjectDefinitionModelImpl
 		objectDefinitionImpl.setCreateDate(getCreateDate());
 		objectDefinitionImpl.setModifiedDate(getModifiedDate());
 		objectDefinitionImpl.setName(getName());
+		objectDefinitionImpl.setSystem(isSystem());
+		objectDefinitionImpl.setVersion(getVersion());
 
 		objectDefinitionImpl.resetOriginalValues();
 
@@ -777,6 +844,10 @@ public class ObjectDefinitionModelImpl
 			objectDefinitionCacheModel.name = null;
 		}
 
+		objectDefinitionCacheModel.system = isSystem();
+
+		objectDefinitionCacheModel.version = getVersion();
+
 		return objectDefinitionCacheModel;
 	}
 
@@ -860,6 +931,8 @@ public class ObjectDefinitionModelImpl
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private String _name;
+	private boolean _system;
+	private double _version;
 
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
@@ -899,6 +972,8 @@ public class ObjectDefinitionModelImpl
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
 		_columnOriginalValues.put("name", _name);
+		_columnOriginalValues.put("system_", _system);
+		_columnOriginalValues.put("version", _version);
 	}
 
 	private static final Map<String, String> _attributeNames;
@@ -907,6 +982,7 @@ public class ObjectDefinitionModelImpl
 		Map<String, String> attributeNames = new HashMap<>();
 
 		attributeNames.put("uuid_", "uuid");
+		attributeNames.put("system_", "system");
 
 		_attributeNames = Collections.unmodifiableMap(attributeNames);
 	}
@@ -939,6 +1015,10 @@ public class ObjectDefinitionModelImpl
 		columnBitmasks.put("modifiedDate", 128L);
 
 		columnBitmasks.put("name", 256L);
+
+		columnBitmasks.put("system_", 512L);
+
+		columnBitmasks.put("version", 1024L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

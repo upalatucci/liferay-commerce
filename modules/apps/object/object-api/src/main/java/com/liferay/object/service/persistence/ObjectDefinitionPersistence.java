@@ -483,45 +483,150 @@ public interface ObjectDefinitionPersistence
 	public int countByCompanyId(long companyId);
 
 	/**
-	 * Returns the object definition where companyId = &#63; and name = &#63; or throws a <code>NoSuchDefinitionException</code> if it could not be found.
+	 * Returns all the object definitions where companyId = &#63; and name = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param name the name
-	 * @return the matching object definition
+	 * @return the matching object definitions
+	 */
+	public java.util.List<ObjectDefinition> findByC_N(
+		long companyId, String name);
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public java.util.List<ObjectDefinition> findByC_N(
+		long companyId, String name, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public java.util.List<ObjectDefinition> findByC_N(
+		long companyId, String name, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+			orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching object definitions
+	 */
+	public java.util.List<ObjectDefinition> findByC_N(
+		long companyId, String name, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+			orderByComparator,
+		boolean useFinderCache);
+
+	/**
+	 * Returns the first object definition in the ordered set where companyId = &#63; and name = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching object definition
 	 * @throws NoSuchDefinitionException if a matching object definition could not be found
 	 */
-	public ObjectDefinition findByC_N(long companyId, String name)
+	public ObjectDefinition findByC_N_First(
+			long companyId, String name,
+			com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+				orderByComparator)
 		throws NoSuchDefinitionException;
 
 	/**
-	 * Returns the object definition where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the first object definition in the ordered set where companyId = &#63; and name = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param name the name
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching object definition, or <code>null</code> if a matching object definition could not be found
 	 */
-	public ObjectDefinition fetchByC_N(long companyId, String name);
+	public ObjectDefinition fetchByC_N_First(
+		long companyId, String name,
+		com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+			orderByComparator);
 
 	/**
-	 * Returns the object definition where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the last object definition in the ordered set where companyId = &#63; and name = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param name the name
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching object definition
+	 * @throws NoSuchDefinitionException if a matching object definition could not be found
 	 */
-	public ObjectDefinition fetchByC_N(
-		long companyId, String name, boolean useFinderCache);
-
-	/**
-	 * Removes the object definition where companyId = &#63; and name = &#63; from the database.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the object definition that was removed
-	 */
-	public ObjectDefinition removeByC_N(long companyId, String name)
+	public ObjectDefinition findByC_N_Last(
+			long companyId, String name,
+			com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+				orderByComparator)
 		throws NoSuchDefinitionException;
+
+	/**
+	 * Returns the last object definition in the ordered set where companyId = &#63; and name = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public ObjectDefinition fetchByC_N_Last(
+		long companyId, String name,
+		com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+			orderByComparator);
+
+	/**
+	 * Returns the object definitions before and after the current object definition in the ordered set where companyId = &#63; and name = &#63;.
+	 *
+	 * @param objectDefinitionId the primary key of the current object definition
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next object definition
+	 * @throws NoSuchDefinitionException if a object definition with the primary key could not be found
+	 */
+	public ObjectDefinition[] findByC_N_PrevAndNext(
+			long objectDefinitionId, long companyId, String name,
+			com.liferay.portal.kernel.util.OrderByComparator<ObjectDefinition>
+				orderByComparator)
+		throws NoSuchDefinitionException;
+
+	/**
+	 * Removes all the object definitions where companyId = &#63; and name = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 */
+	public void removeByC_N(long companyId, String name);
 
 	/**
 	 * Returns the number of object definitions where companyId = &#63; and name = &#63;.
@@ -531,6 +636,64 @@ public interface ObjectDefinitionPersistence
 	 * @return the number of matching object definitions
 	 */
 	public int countByC_N(long companyId, String name);
+
+	/**
+	 * Returns the object definition where companyId = &#63; and name = &#63; and version = &#63; or throws a <code>NoSuchDefinitionException</code> if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param version the version
+	 * @return the matching object definition
+	 * @throws NoSuchDefinitionException if a matching object definition could not be found
+	 */
+	public ObjectDefinition findByC_N_V(
+			long companyId, String name, double version)
+		throws NoSuchDefinitionException;
+
+	/**
+	 * Returns the object definition where companyId = &#63; and name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param version the version
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public ObjectDefinition fetchByC_N_V(
+		long companyId, String name, double version);
+
+	/**
+	 * Returns the object definition where companyId = &#63; and name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param version the version
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public ObjectDefinition fetchByC_N_V(
+		long companyId, String name, double version, boolean useFinderCache);
+
+	/**
+	 * Removes the object definition where companyId = &#63; and name = &#63; and version = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param version the version
+	 * @return the object definition that was removed
+	 */
+	public ObjectDefinition removeByC_N_V(
+			long companyId, String name, double version)
+		throws NoSuchDefinitionException;
+
+	/**
+	 * Returns the number of object definitions where companyId = &#63; and name = &#63; and version = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @param version the version
+	 * @return the number of matching object definitions
+	 */
+	public int countByC_N_V(long companyId, String name, double version);
 
 	/**
 	 * Caches the object definition in the entity cache if it is enabled.

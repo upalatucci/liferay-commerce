@@ -42,6 +42,8 @@ public class ObjectDefinitionSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setName(model.getName());
+		soapModel.setSystem(model.isSystem());
+		soapModel.setVersion(model.getVersion());
 
 		return soapModel;
 	}
@@ -175,6 +177,26 @@ public class ObjectDefinitionSoap implements Serializable {
 		_name = name;
 	}
 
+	public boolean getSystem() {
+		return _system;
+	}
+
+	public boolean isSystem() {
+		return _system;
+	}
+
+	public void setSystem(boolean system) {
+		_system = system;
+	}
+
+	public double getVersion() {
+		return _version;
+	}
+
+	public void setVersion(double version) {
+		_version = version;
+	}
+
 	private long _mvccVersion;
 	private String _uuid;
 	private long _objectDefinitionId;
@@ -184,5 +206,7 @@ public class ObjectDefinitionSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _name;
+	private boolean _system;
+	private double _version;
 
 }

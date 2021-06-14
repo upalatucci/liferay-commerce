@@ -115,8 +115,11 @@ public class ObjectFieldLocalServiceUtil {
 	 *
 	 * @param objectField the object field
 	 * @return the object field that was removed
+	 * @throws PortalException
 	 */
-	public static ObjectField deleteObjectField(ObjectField objectField) {
+	public static ObjectField deleteObjectField(ObjectField objectField)
+		throws PortalException {
+
 		return getService().deleteObjectField(objectField);
 	}
 
@@ -325,6 +328,15 @@ public class ObjectFieldLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static ObjectField updateObjectField(
+			long objectFieldId, boolean indexed, boolean indexedAsKeyword,
+			String indexedLanguageId, String type)
+		throws PortalException {
+
+		return getService().updateObjectField(
+			objectFieldId, indexed, indexedAsKeyword, indexedLanguageId, type);
 	}
 
 	/**

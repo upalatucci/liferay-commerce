@@ -36,11 +36,12 @@ public class ObjectDefinitionLocalServiceWrapper
 	@Override
 	public com.liferay.object.model.ObjectDefinition addObjectDefinition(
 			long userId, String name,
-			java.util.List<com.liferay.object.model.ObjectField> objectFields)
+			java.util.List<com.liferay.object.model.ObjectField> objectFields,
+			boolean system)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectDefinitionLocalService.addObjectDefinition(
-			userId, name, objectFields);
+			userId, name, objectFields, system);
 	}
 
 	/**
@@ -257,6 +258,15 @@ public class ObjectDefinitionLocalServiceWrapper
 			objectDefinitionId);
 	}
 
+	@Override
+	public com.liferay.object.model.ObjectDefinition
+		fetchObjectDefinitionByC_N_V(
+			long companyId, String name, double version) {
+
+		return _objectDefinitionLocalService.fetchObjectDefinitionByC_N_V(
+			companyId, name, version);
+	}
+
 	/**
 	 * Returns the object definition with the matching UUID and company.
 	 *
@@ -391,6 +401,17 @@ public class ObjectDefinitionLocalServiceWrapper
 	public void undeployObjectDefinition(long objectDefinitionId) {
 		_objectDefinitionLocalService.undeployObjectDefinition(
 			objectDefinitionId);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectDefinition updateObjectDefinition(
+			long userId, long objectDefinitionId,
+			java.util.List<com.liferay.object.model.ObjectField> objectFields,
+			double version)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectDefinitionLocalService.updateObjectDefinition(
+			userId, objectDefinitionId, objectFields, version);
 	}
 
 	/**
