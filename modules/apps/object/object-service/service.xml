@@ -187,5 +187,6 @@
 		<exception>ObjectFieldName</exception>
 		<exception>ObjectFieldType</exception>
 		<exception>ReservedObjectField</exception>
+		<exception>SystemObjectDefinition</exception>
 	</exceptions>
 </service-builder>
