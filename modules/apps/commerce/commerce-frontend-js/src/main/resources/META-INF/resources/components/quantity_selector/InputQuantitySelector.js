@@ -13,7 +13,7 @@
  */
 
 import {ClayInput} from '@clayui/form';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import QuantityControls from './utils/index';
 
@@ -49,11 +49,14 @@ function InputQuantitySelector({
 					: parsedInputQuantity
 			);
 
-			onUpdate(quantity);
 			setSelectedQuantity(quantity);
 		},
-		[onUpdate, quantityControls]
+		[quantityControls]
 	);
+
+	useEffect(() => {
+		onUpdate(selectedQuantity);
+	}, [onUpdate, selectedQuantity]);
 
 	return (
 		<ClayInput
