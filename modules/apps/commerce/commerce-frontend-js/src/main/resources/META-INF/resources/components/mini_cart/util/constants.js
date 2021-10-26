@@ -36,6 +36,7 @@ export const INITIAL_ITEM_STATE = {
 export const REMOVAL_TIMEOUT = 2000;
 export const REMOVAL_CANCELING_TIMEOUT = 700;
 export const REMOVAL_ERRORS_TIMEOUT = 4000;
+export const UPDATE_AFTER = 500;
 
 /**
  * Cart component types keys constants

@@ -22,9 +22,9 @@ import {
 	REMOVAL_CANCELING_TIMEOUT,
 	REMOVAL_ERRORS_TIMEOUT,
 	REMOVAL_TIMEOUT,
+	UPDATE_AFTER,
 } from '../../../src/main/resources/META-INF/resources/components/mini_cart/util/constants';
 import * as MiniCartUtils from '../../../src/main/resources/META-INF/resources/components/mini_cart/util/index';
-import {UPDATE_AFTER} from '../../../src/main/resources/META-INF/resources/components/quantity_selector/utils';
 import {PRODUCT_REMOVED_FROM_CART} from '../../../src/main/resources/META-INF/resources/utilities/eventsDefinitions';
 
 describe('MiniCart Item', () => {
@@ -433,6 +433,10 @@ describe('MiniCart Item', () => {
 							CartResource,
 							updateCartModel,
 						} = BASE_CONTEXT_MOCK;
+
+						expect(
+							CartResource.updateItemById
+						).toHaveBeenCalledTimes(1);
 
 						expect(
 							CartResource.updateItemById

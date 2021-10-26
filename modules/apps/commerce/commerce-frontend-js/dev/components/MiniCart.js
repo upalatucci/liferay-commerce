@@ -18,8 +18,14 @@ import '../../src/main/resources/META-INF/resources/styles/main.scss';
 
 launcher('mini_cart', 'mini-cart-root-id', {
 	cartActionURLs: {
-		checkoutURL: 'http://localhost:8080',
-		orderDetailURL: 'http://localhost:8080?commerceOrderUuid=12323',
+		checkoutURL: 'http://localhost:8080/checkoutUrl',
+		orderDetailURL: 'http://localhost:8080/orderDetailUrl',
+		siteDefaultURL: 'http://localhost:8080/siteUrl',
 	},
+	displayDiscountLevels: false,
+	displayTotalItemsQuantity: false,
+	itemsQuantity: 1,
+	orderId: 44577,
 	spritemap: './assets/clay/icons.svg',
+	toggleable: true,
 });

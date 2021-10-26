@@ -17,8 +17,9 @@ import ClayIcon from '@clayui/icon';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useMemo, useState} from 'react';
 
+import debounce from '../../utilities/debounce';
 import {PRODUCT_REMOVED_FROM_CART} from '../../utilities/eventsDefinitions';
 import Price from '../price/Price';
 import QuantitySelector from '../quantity_selector/QuantitySelector';
@@ -29,6 +30,7 @@ import {
 	REMOVAL_CANCELING_TIMEOUT,
 	REMOVAL_ERRORS_TIMEOUT,
 	REMOVAL_TIMEOUT,
+	UPDATE_AFTER,
 } from './util/constants';
 import {parseOptions} from './util/index';
 
@@ -64,7 +66,7 @@ function CartItem({item: cartItem}) {
 	const options = parseOptions(rawOptions);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const showErrors = () => {
+	const showErrors = useCallback(() => {
 		setItemState({
 			...INITIAL_ITEM_STATE,
 			isShowingErrors: true,
@@ -74,7 +76,7 @@ function CartItem({item: cartItem}) {
 				}
 			}, REMOVAL_ERRORS_TIMEOUT),
 		});
-	};
+	}, [setItemState, isMounted]);
 
 	const cancelRemoveItem = () => {
 		clearTimeout(itemState.removalTimeoutRef);
@@ -128,6 +130,46 @@ function CartItem({item: cartItem}) {
 		});
 	};
 
+	const onQuantityUpdate = useCallback(
+		(freshQuantity) => {
+			if (freshQuantity && freshQuantity !== quantity) {
+				setIsUpdating(true);
+
+				CartResource.updateItemById(cartItemId, {
+					...cartItem,
+					quantity: freshQuantity,
+				})
+					.then(() => {
+						if (isMounted()) {
+							updateCartModel({id: orderId});
+						}
+					})
+					.catch(showErrors)
+					.finally(() => {
+						if (isMounted()) {
+							setIsUpdating(false);
+						}
+					});
+			}
+		},
+		[
+			CartResource,
+			cartItem,
+			cartItemId,
+			isMounted,
+			orderId,
+			quantity,
+			setIsUpdating,
+			showErrors,
+			updateCartModel,
+		]
+	);
+
+	const debounceCallback = useMemo(
+		() => debounce(onQuantityUpdate, UPDATE_AFTER),
+		[onQuantityUpdate]
+	);
+
 	const {
 		isGettingRemoved,
 		isRemovalCanceled,
@@ -167,27 +209,7 @@ function CartItem({item: cartItem}) {
 
 			<div className="mini-cart-item-quantity">
 				<QuantitySelector
-					onUpdate={(freshQuantity) => {
-						if (freshQuantity && freshQuantity !== quantity) {
-							setIsUpdating(true);
-
-							CartResource.updateItemById(cartItemId, {
-								...cartItem,
-								quantity: freshQuantity,
-							})
-								.then(() => {
-									if (isMounted()) {
-										updateCartModel({id: orderId});
-									}
-								})
-								.catch(showErrors)
-								.finally(() => {
-									if (isMounted()) {
-										setIsUpdating(false);
-									}
-								});
-						}
-					}}
+					onUpdate={debounceCallback}
 					quantity={quantity}
 					spritemap={spritemap}
 					{...settings}

@@ -13,9 +13,9 @@
  */
 
 import {ClayInput} from '@clayui/form';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
-import QuantityControls, {UPDATE_AFTER} from './utils/index';
+import QuantityControls from './utils/index';
 
 function InputQuantitySelector({
 	maxQuantity,
@@ -39,33 +39,31 @@ function InputQuantitySelector({
 		Math.max(startingQuantity, quantityControls.min)
 	);
 
-	const keypressDebounce = useRef();
-
 	useEffect(() => {
-		clearTimeout(keypressDebounce.current);
+		if (onUpdate) {
+			onUpdate(selectedQuantity);
+		}
+	}, [onUpdate, selectedQuantity]);
 
-		keypressDebounce.current = setTimeout(() => {
-			setSelectedQuantity(() => {
-				const quantity = quantityControls.getLowerBound(
-					selectedQuantity > quantityControls.max
-						? quantityControls.max
-						: selectedQuantity
-				);
+	const onChange = useCallback(
+		({target}) => {
+			const parsedValue = parseInt(target.value, 10);
+			const newQuantity = quantityControls.getLowerBound(
+				parsedValue > quantityControls.max
+					? quantityControls.max
+					: parsedValue
+			);
 
-				onUpdate(quantity);
-
-				return quantity;
-			});
-		}, UPDATE_AFTER);
-	}, [onUpdate, quantityControls, selectedQuantity]);
+			setSelectedQuantity(newQuantity);
+		},
+		[quantityControls, setSelectedQuantity]
+	);
 
 	return (
 		<ClayInput
 			{...props}
 			{...quantityControls.getConfiguration()}
-			onChange={({target}) =>
-				setSelectedQuantity(parseInt(target.value, 10))
-			}
+			onChange={onChange}
 			type="number"
 			value={selectedQuantity.toString()}
 		/>
