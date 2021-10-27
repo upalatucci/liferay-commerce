@@ -14,6 +14,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {act, cleanup, fireEvent, render, wait} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import CartItem from '../../../src/main/resources/META-INF/resources/components/mini_cart/CartItem';
@@ -353,12 +354,14 @@ describe('MiniCart Item', () => {
 		});
 
 		describe('if the cart item quantity is edited, calls the API and', () => {
-			it('updates the item quantity', async () => {
-				const UPDATED_QUANTITY = '2';
+			it('updates the item quantity frequently with debounce it call the API only one time', async () => {
+				const UPDATED_QUANTITY_TRIES = ['13', '43', '54'];
+				const testProps = {...BASE_PROPS};
+				testProps.item.settings.maxQuantity = 150;
 
 				const {container} = render(
 					<MiniCartContext.Provider value={BASE_CONTEXT_MOCK}>
-						<CartItem {...BASE_PROPS} />
+						<CartItem {...testProps} />
 					</MiniCartContext.Provider>
 				);
 
@@ -367,10 +370,12 @@ describe('MiniCart Item', () => {
 				);
 
 				await act(async () => {
-					fireEvent.change(InputQuantitySelector, {
-						target: {
-							value: UPDATED_QUANTITY,
-						},
+					UPDATED_QUANTITY_TRIES.forEach((quantity) => {
+						fireEvent.change(InputQuantitySelector, {
+							target: {
+								value: quantity,
+							},
+						});
 					});
 				});
 
@@ -387,7 +392,12 @@ describe('MiniCart Item', () => {
 						BASE_PROPS.item.id,
 						{
 							...BASE_PROPS.item,
-							quantity: parseInt(UPDATED_QUANTITY, 10),
+							quantity: parseInt(
+								UPDATED_QUANTITY_TRIES[
+									UPDATED_QUANTITY_TRIES.length - 1
+								],
+								10
+							),
 						}
 					);
 
