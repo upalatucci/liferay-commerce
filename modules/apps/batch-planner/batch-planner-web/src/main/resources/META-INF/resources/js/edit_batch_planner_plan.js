@@ -26,6 +26,13 @@ function enableButtons() {
 	});
 }
 
+function disableButtons() {
+	const buttons = document.querySelectorAll('form button');
+	buttons.forEach((button) => {
+		button.setAttribute('disabled', "disabled");
+	});
+}
+
 function getOptionElement(label, schemaName, value) {
 	const optionElement = document.createElement('option');
 
@@ -53,6 +60,7 @@ export default function ({namespace}) {
 
 	headlessEnpointSelect.addEventListener('change', async (event) => {
 		event.target.disabled = true;
+		disableButtons()
 
 		const headlessEnpoint = event.target.value;
 
@@ -123,6 +131,7 @@ export default function ({namespace}) {
 
 	async function handleClassNameSelectChange() {
 		const headlessEnpointValue = headlessEnpointSelect.value;
+		disableButtons()
 
 		const selectedOption =
 			internalClassNameSelect.options[
