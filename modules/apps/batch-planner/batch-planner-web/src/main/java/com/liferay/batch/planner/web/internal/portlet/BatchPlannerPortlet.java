@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	property = {
+		"javax.portlet.version=3.0",
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-batch-planner",
 		"com.liferay.portlet.display-category=category.hidden",

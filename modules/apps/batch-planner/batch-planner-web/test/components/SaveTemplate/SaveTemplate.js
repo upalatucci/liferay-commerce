@@ -25,9 +25,9 @@ import SaveTemplate from '../../../src/main/resources/META-INF/resources/js/Save
 
 const INPUT_VALUE_TEST = 'test';
 const BASE_PROPS = {
-	formDataQuerySelector: 'form',
-	formSubmitURL: 'https://formUrl.test',
-	namespace: 'test',
+	formSaveAsTemplateDataQuerySelector: 'form',
+	formSaveAsTemplateURL: 'https://formUrl.test',
+	portletNamespace: 'test',
 };
 
 window.Liferay = {
@@ -91,6 +91,26 @@ describe('SaveTemplateModal', () => {
 			);
 
 			expect(saveButton).toBeDisabled();
+		});
+
+		it('must has button enabled if text input provided', async () => {
+			const testName = 'test';
+			const {getByPlaceholderText, getByText} = render(
+				<SaveTemplate {...BASE_PROPS} />
+			);
+
+			fireEvent.click(
+				getByText(Liferay.Language.get('save-as-template'))
+			);
+
+			await waitForElement(() => getByText(Liferay.Language.get('save')));
+
+			fireEvent.change(
+				getByPlaceholderText(Liferay.Language.get('template-name')),
+				{target: {value: testName}}
+			);
+
+			expect(getByText(Liferay.Language.get('save'))).not.toBeDisabled();
 		});
 	});
 });

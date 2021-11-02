@@ -19,34 +19,30 @@ import {useIsMounted} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 
-import {saveTemplateAPI} from './api';
+import {exportAPI} from './api';
 
-const SaveTemplateModal = ({
+const ExportModal = ({
 	closeModal,
 	formDataQuerySelector,
 	formSubmitURL,
 	namespace,
 	observer,
 }) => {
-	const inputNameId = namespace + 'name';
 	const isMounted = useIsMounted();
 	const [errorMessage, setErrorMessage] = useState();
 	const [loadingResponse, setLoadingResponse] = useState(false);
-	const [inputValue, setInputValue] = useState('');
 
 	const _handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
-			const updateData = {[inputNameId]: inputValue};
-			const saveTemplateResponse = saveTemplateAPI(
+			const responseJson = exportAPI(
 				formSubmitURL,
-				formDataQuerySelector,
-				updateData
+				formDataQuerySelector
 			);
 
 			if (isMounted()) {
-				if (saveTemplateResponse.error) {
+				if (responseJson.error) {
 					setLoadingResponse(false);
 					setErrorMessage(responseContent?.error);
 				} else {
@@ -63,7 +59,7 @@ const SaveTemplateModal = ({
 	return (
 		<ClayModal observer={observer} size="md">
 			<ClayModal.Header>
-				{Liferay.Language.get('save-as-template')}
+				{Liferay.Language.get('export')}
 			</ClayModal.Header>
 
 			<form id={`${namespace}form`} onSubmit={_handleSubmit}>
@@ -73,29 +69,6 @@ const SaveTemplateModal = ({
 							errorMessage ? 'has-error' : ''
 						}`}
 					>
-						<label className="control-label" htmlFor={inputNameId}>
-							{Liferay.Language.get('name')}
-
-							<span className="reference-mark">
-								<ClayIcon symbol="asterisk" />
-							</span>
-						</label>
-
-						<input
-							autoFocus
-							className="form-control"
-							disabled={loadingResponse}
-							id={inputNameId}
-							name={inputNameId}
-							onChange={(event) =>
-								setInputValue(event.target.value)
-							}
-							placeholder={Liferay.Language.get('template-name')}
-							required
-							type="text"
-							value={inputValue}
-						/>
-
 						{errorMessage && (
 							<div className="form-feedback-item">
 								<ClayIcon
@@ -121,9 +94,7 @@ const SaveTemplateModal = ({
 							</ClayButton>
 
 							<ClayButton
-								disabled={
-									loadingResponse || inputValue.length == 0
-								}
+								disabled={loadingResponse}
 								displayType="primary"
 								type="submit"
 							>
@@ -136,7 +107,7 @@ const SaveTemplateModal = ({
 									</span>
 								)}
 
-								{Liferay.Language.get('save')}
+								{Liferay.Language.get('download')}
 							</ClayButton>
 						</ClayButton.Group>
 					}
@@ -146,7 +117,7 @@ const SaveTemplateModal = ({
 	);
 };
 
-SaveTemplateModal.propTypes = {
+ExportModal.propTypes = {
 	closeModal: PropTypes.func.isRequired,
 	formDataQuerySelector: PropTypes.string.isRequired,
 	formSubmitURL: PropTypes.string.isRequired,
@@ -154,4 +125,4 @@ SaveTemplateModal.propTypes = {
 	observer: PropTypes.object.isRequired,
 };
 
-export default SaveTemplateModal;
+export default ExportModal;

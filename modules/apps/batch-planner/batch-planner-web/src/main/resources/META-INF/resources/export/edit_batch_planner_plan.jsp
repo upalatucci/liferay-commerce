@@ -30,7 +30,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 			PortletURLBuilder.createActionURL(
 				renderResponse
 			).setActionName(
-				"/batch_planner/edit_export_batch_planner_plan"
+				"/batch_planner/edit_batch_planner_plan"
 			).setCMD(
 				Constants.EXPORT
 			).setRedirect(
@@ -185,12 +185,27 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 					/>
 				</span>
 
-				<clay:button
-					disabled="true"
-					displayType="primary"
-					label="export"
-					type="submit"
-				/>
+				<span>
+					<react:component
+						props='<%=
+							HashMapBuilder.<String, Object>put(
+								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
+							).put(
+								"formExportURL",
+								PortletURLBuilder.createActionURL(
+									renderResponse
+								).setActionName(
+									"/batch_planner/edit_export_batch_planner_plan"
+								).setCMD(
+									Constants.EXPORT
+								).setRedirect(
+									backURL
+								).buildString()
+							).build()
+						%>'
+						module="js/Export"
+					/>
+				</span>
 			</liferay-frontend:edit-form-footer>
 		</div>
 	</form>
