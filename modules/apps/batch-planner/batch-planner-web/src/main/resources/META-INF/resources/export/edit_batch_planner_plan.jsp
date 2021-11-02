@@ -167,9 +167,9 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 					<react:component
 						props='<%=
 							HashMapBuilder.<String, Object>put(
-								"formSaveAsTemplateDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
+								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
 							).put(
-								"formSaveAsTemplateURL",
+								"formExportURL",
 								ResourceURLBuilder.createResourceURL(
 									renderResponse
 								).setCMD(
@@ -185,12 +185,27 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 					/>
 				</span>
 
-				<clay:button
-					disabled="true"
-					displayType="primary"
-					label="export"
-					type="submit"
-				/>
+				<span>
+					<react:component
+						props='<%=
+							HashMapBuilder.<String, Object>put(
+								"formSaveAsTemplateDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
+							).put(
+								"formSaveAsTemplateURL",
+								PortletURLBuilder.createActionURL(
+									renderResponse
+								).setActionName(
+									"/batch_planner/edit_batch_planner_plan"
+								).setCMD(
+									Constants.EXPORT
+								).setRedirect(
+									backURL
+								).buildString()
+							).build()
+						%>'
+						module="js/Export"
+					/>
+				</span>
 			</liferay-frontend:edit-form-footer>
 		</div>
 	</form>

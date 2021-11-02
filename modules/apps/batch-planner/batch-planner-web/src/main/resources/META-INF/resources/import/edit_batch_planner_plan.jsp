@@ -176,12 +176,27 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 					/>
 				</span>
 
-				<clay:button
-					disabled="true"
-					displayType="primary"
-					label="import"
-					type="submit"
-				/>
+				<span>
+					<react:component
+						props='<%=
+							HashMapBuilder.<String, Object>put(
+								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
+							).put(
+								"formExportURL",
+								PortletURLBuilder.createActionURL(
+									renderResponse
+								).setActionName(
+									"/batch_planner/edit_batch_planner_plan"
+								).setCMD(
+									(batchPlannerPlanId == 0) ? Constants.IMPORT : Constants.UPDATE
+								).setRedirect(
+									backURL
+								).buildString()
+							).build()
+						%>'
+						module="js/Export"
+					/>
+				</span>
 			</liferay-frontend:edit-form-footer>
 		</div>
 	</form>
