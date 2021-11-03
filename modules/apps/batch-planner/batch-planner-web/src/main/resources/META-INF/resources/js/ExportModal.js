@@ -37,14 +37,14 @@ const ExportModal = ({
 
 		try {
 			const responseJson = exportAPI(
-				formSubmitURL,
-				formDataQuerySelector
+				formDataQuerySelector,
+				formSubmitURL
 			);
 
 			if (isMounted()) {
 				if (responseJson.error) {
 					setLoadingResponse(false);
-					setErrorMessage(responseContent?.error);
+					setErrorMessage(responseJson?.error);
 				} else {
 					closeModal();
 				}

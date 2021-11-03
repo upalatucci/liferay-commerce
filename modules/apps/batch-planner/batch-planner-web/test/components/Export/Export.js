@@ -19,6 +19,7 @@ import {
 	render,
 	waitForElement,
 } from '@testing-library/react';
+import fetchMock from 'fetch-mock';
 import React from 'react';
 
 import Export from '../../../src/main/resources/META-INF/resources/js/Export';
@@ -28,21 +29,6 @@ const BASE_PROPS = {
 	formExportDataQuerySelector: 'form',
 	formExportURL: 'https://formUrl.test',
 	portletNamespace: 'test',
-};
-
-window.Liferay = {
-	Language: {
-		get: (key) => {
-			let counter = 0;
-
-			return key.replace(new RegExp('(^x-)|(-x-)|(-x$)', 'gm'), (match) =>
-				match.replace('x', `{${counter++}}`)
-			);
-		},
-	},
-	ThemeDisplay: {
-		getBCP47LanguageId: () => 'en-US',
-	},
 };
 
 describe('ExportModal', () => {
@@ -56,7 +42,10 @@ describe('ExportModal', () => {
 		document.body.appendChild(form);
 	});
 
-	afterEach(cleanup);
+	afterEach(() => {
+		fetchMock.restore();
+		cleanup();
+	});
 
 	it('must render export button', () => {
 		const {getByText} = render(<Export {...BASE_PROPS} />);
