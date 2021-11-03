@@ -19,6 +19,7 @@ import {
 	render,
 	waitForElement,
 } from '@testing-library/react';
+import fetchMock from 'fetch-mock';
 import React from 'react';
 
 import SaveTemplate from '../../../src/main/resources/META-INF/resources/js/SaveTemplate';
@@ -28,21 +29,6 @@ const BASE_PROPS = {
 	formSaveAsTemplateDataQuerySelector: 'form',
 	formSaveAsTemplateURL: 'https://formUrl.test',
 	portletNamespace: 'test',
-};
-
-window.Liferay = {
-	Language: {
-		get: (key) => {
-			let counter = 0;
-
-			return key.replace(new RegExp('(^x-)|(-x-)|(-x$)', 'gm'), (match) =>
-				match.replace('x', `{${counter++}}`)
-			);
-		},
-	},
-	ThemeDisplay: {
-		getBCP47LanguageId: () => 'en-US',
-	},
 };
 
 describe('SaveTemplateModal', () => {
@@ -56,7 +42,10 @@ describe('SaveTemplateModal', () => {
 		document.body.appendChild(form);
 	});
 
-	afterEach(cleanup);
+	afterEach(() => {
+		fetchMock.restore();
+		cleanup();
+	});
 
 	it('must render save template button', () => {
 		const {getByText} = render(<SaveTemplate {...BASE_PROPS} />);
@@ -111,6 +100,35 @@ describe('SaveTemplateModal', () => {
 			);
 
 			expect(getByText(Liferay.Language.get('save'))).not.toBeDisabled();
+		});
+
+		it('must call api with form data and add the input field data', async () => {
+			const mockedApi = fetchMock.mock(
+				BASE_PROPS.formSaveAsTemplateURL,
+				() => {
+					return {test: 'test'};
+				}
+			);
+
+			const testName = 'test';
+			const {getByPlaceholderText, getByText} = render(
+				<SaveTemplate {...BASE_PROPS} />
+			);
+
+			fireEvent.click(
+				getByText(Liferay.Language.get('save-as-template'))
+			);
+
+			await waitForElement(() => getByText(Liferay.Language.get('save')));
+
+			fireEvent.change(
+				getByPlaceholderText(Liferay.Language.get('template-name')),
+				{target: {value: testName}}
+			);
+
+			fireEvent.click(getByText(Liferay.Language.get('save')));
+
+			expect(mockedApi.called()).toBe(true);
 		});
 	});
 });

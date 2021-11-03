@@ -21,12 +21,11 @@ const HEADERS = new Headers({
 });
 
 export const saveTemplateAPI = async (
-	url,
 	formDataQuerySelector,
-	updateData
+	updateData,
+	url
 ) => {
 	const mainFormData = document.querySelector(formDataQuerySelector);
-
 	Liferay.Util.setFormValues(mainFormData, updateData);
 
 	const formData = new FormData(mainFormData);
@@ -39,7 +38,7 @@ export const saveTemplateAPI = async (
 	return await response.json();
 };
 
-export const exportAPI = async (url, formDataQuerySelector) => {
+export const exportAPI = async (formDataQuerySelector, url) => {
 	const mainFormData = document.querySelector(formDataQuerySelector);
 
 	const formData = new FormData(mainFormData);

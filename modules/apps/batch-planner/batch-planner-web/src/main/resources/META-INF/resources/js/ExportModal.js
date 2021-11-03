@@ -37,8 +37,8 @@ const ExportModal = ({
 
 		try {
 			const responseJson = exportAPI(
-				formSubmitURL,
-				formDataQuerySelector
+				formDataQuerySelector,
+				formSubmitURL
 			);
 
 			if (isMounted()) {

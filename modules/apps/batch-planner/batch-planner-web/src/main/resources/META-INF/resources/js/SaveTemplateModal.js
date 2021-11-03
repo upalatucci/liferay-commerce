@@ -40,9 +40,9 @@ const SaveTemplateModal = ({
 		try {
 			const updateData = {[inputNameId]: inputValue};
 			const saveTemplateResponse = saveTemplateAPI(
-				formSubmitURL,
 				formDataQuerySelector,
-				updateData
+				updateData,
+				formSubmitURL
 			);
 
 			if (isMounted()) {
