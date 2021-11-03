@@ -25,24 +25,9 @@ import SaveTemplate from '../../../src/main/resources/META-INF/resources/js/Save
 
 const INPUT_VALUE_TEST = 'test';
 const BASE_PROPS = {
-	formDataQuerySelector: 'form',
-	formSubmitURL: 'https://formUrl.test',
-	namespace: 'test',
-};
-
-window.Liferay = {
-	Language: {
-		get: (key) => {
-			let counter = 0;
-
-			return key.replace(new RegExp('(^x-)|(-x-)|(-x$)', 'gm'), (match) =>
-				match.replace('x', `{${counter++}}`)
-			);
-		},
-	},
-	ThemeDisplay: {
-		getBCP47LanguageId: () => 'en-US',
-	},
+	formSaveAsTemplateDataQuerySelector: 'form',
+	formSaveAsTemplateURL: 'https://formUrl.test',
+	portletNamespace: 'test',
 };
 
 describe('SaveTemplateModal', () => {
