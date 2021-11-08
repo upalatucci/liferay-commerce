@@ -97,14 +97,16 @@ export default function ({namespace}) {
 			});
 
 			internalClassNameSelect.disabled = false;
-		} catch (error) {
+		}
+		catch (error) {
 			openToast({
 				message: Liferay.Language.get('your-request-has-failed'),
 				type: 'danger',
 			});
 
 			console.error('Failed to fetch ' + error);
-		} finally {
+		}
+		finally {
 			event.target.disabled = false;
 		}
 	});
@@ -155,7 +157,8 @@ export default function ({namespace}) {
 			Liferay.fire('schema-selected', {
 				schema: schemaEntry.properties,
 			});
-		} catch (error) {
+		}
+		catch (error) {
 			openToast({
 				message: Liferay.Language.get('your-request-has-failed'),
 				type: 'danger',

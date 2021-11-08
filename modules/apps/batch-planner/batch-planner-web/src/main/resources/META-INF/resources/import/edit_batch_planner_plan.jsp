@@ -175,9 +175,9 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 						%>'
 					/>
 				</span>
-
 				<span>
 					<react:component
+						module="js/Export"
 						props='<%=
 							HashMapBuilder.<String, Object>put(
 								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
@@ -194,7 +194,6 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 								).buildString()
 							).build()
 						%>'
-						module="js/Export"
 					/>
 				</span>
 			</liferay-frontend:edit-form-footer>

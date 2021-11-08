@@ -171,26 +171,23 @@ renderResponse.setTitle(LanguageUtil.get(request, "export"));
 						%>'
 					/>
 				</span>
-
 				<span>
 					<react:component
+						module="js/export/Export"
 						props='<%=
 							HashMapBuilder.<String, Object>put(
 								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
 							).put(
 								"formExportURL",
-								PortletURLBuilder.createActionURL(
+								ResourceURLBuilder.createResourceURL(
 									renderResponse
-								).setActionName(
-									"/batch_planner/edit_export_batch_planner_plan"
 								).setCMD(
 									Constants.EXPORT
-								).setRedirect(
-									backURL
+								).setResourceID(
+									"/batch_planner/edit_export_batch_planner_plan"
 								).buildString()
 							).build()
 						%>'
-						module="js/Export"
 					/>
 				</span>
 			</liferay-frontend:edit-form-footer>
