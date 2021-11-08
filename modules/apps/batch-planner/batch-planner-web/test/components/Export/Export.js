@@ -75,4 +75,20 @@ describe('ExportModal', () => {
 
 		expect(exportButton).toBeInTheDocument();
 	});
+
+	it('must call api with form data', async () => {
+		const mockedApi = fetchMock.mock(BASE_PROPS.formExportURL, () => {
+			return {test: 'test'};
+		});
+
+		const {getByText} = render(<Export {...BASE_PROPS} />);
+
+		fireEvent.click(getByText(Liferay.Language.get('export')));
+
+		await waitForElement(() => getByText(Liferay.Language.get('download')));
+
+		fireEvent.click(getByText(Liferay.Language.get('download')));
+
+		expect(mockedApi.called()).toBe(true);
+	});
 });

@@ -57,7 +57,7 @@ const ExportModal = ({
 	};
 
 	return (
-		<ClayModal observer={observer} size="md">
+		<ClayModal className="modal-info" observer={observer} size="md">
 			<ClayModal.Header>
 				{Liferay.Language.get('export')}
 			</ClayModal.Header>

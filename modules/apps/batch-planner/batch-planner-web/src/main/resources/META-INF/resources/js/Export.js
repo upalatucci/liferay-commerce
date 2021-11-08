@@ -59,7 +59,7 @@ function Export({
 				'change',
 				handleExternalInputChange
 			);
-	}, []);
+	}, [portletNamespace]);
 
 	return (
 		<span>

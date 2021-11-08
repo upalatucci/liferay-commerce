@@ -27,7 +27,7 @@ const INPUT_VALUE_TEST = 'test';
 const BASE_PROPS = {
 	formSaveAsTemplateDataQuerySelector: 'form',
 	formSaveAsTemplateURL: 'https://formUrl.test',
-	portletNamespace: 'test',
+	namespace: 'test',
 };
 
 describe('SaveTemplateModal', () => {
