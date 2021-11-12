@@ -113,7 +113,7 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 			</div>
 		</div>
 
-		<div class="card hide">
+		<div class="card hide import-mapping-table">
 			<h4 class="card-header"><%= LanguageUtil.get(request, "import-mappings") %></h4>
 
 			<div class="card-body">
@@ -175,32 +175,23 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 						%>'
 					/>
 				</span>
-				<span>
-					<react:component
-						module="js/Export"
-						props='<%=
-							HashMapBuilder.<String, Object>put(
-								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
-							).put(
-								"formExportURL",
-								PortletURLBuilder.createActionURL(
-									renderResponse
-								).setActionName(
-									"/batch_planner/edit_import_batch_planner_plan"
-								).setCMD(
-									(batchPlannerPlanId == 0) ? Constants.IMPORT : Constants.UPDATE
-								).setRedirect(
-									backURL
-								).buildString()
-							).build()
-						%>'
-					/>
-				</span>
+
+				<clay:button
+					disabled="true"
+					displayType="primary"
+					label="import"
+					type="submit"
+				/>
 			</liferay-frontend:edit-form-footer>
 		</div>
 	</form>
 </div>
 
 <liferay-frontend:component
+	context='<%=
+		HashMapBuilder.<String, Object>put(
+			"importMapping", "true"
+		).build()
+	%>'
 	module="js/edit_batch_planner_plan"
 />
