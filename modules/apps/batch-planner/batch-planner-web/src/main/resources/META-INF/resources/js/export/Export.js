@@ -67,7 +67,7 @@ function Export({
 			<ClayButton
 				disabled={disable}
 				displayType="primary"
-				id={`${portletNamespace}saveTemplate`}
+				id={`${portletNamespace}Export`}
 				onClick={onButtonClick}
 				type="submit"
 			>
