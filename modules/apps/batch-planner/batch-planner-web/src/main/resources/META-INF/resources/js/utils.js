@@ -12,6 +12,8 @@
  * details.
  */
 
+import PropTypes from 'prop-types';
+
 export const download = (url, filename) => {
 	var a = document.createElement('a');
 	document.body.appendChild(a);
@@ -20,4 +22,57 @@ export const download = (url, filename) => {
 	a.download = filename;
 	a.click();
 	window.URL.revokeObjectURL(url);
+};
+
+export const getFieldsFromSchema = (schema) => {
+	const dbFields = [];
+	const fileFields = [];
+
+	for (const [label, property] of Object.entries(schema)) {
+		if (property.writeOnly || label.startsWith('x-')) {
+			continue;
+		}
+
+		let value = label;
+
+		if (property.extensions && property.extensions['x-parent-map']) {
+			value = property.extensions['x-parent-map'] + '_' + label;
+		}
+
+		const field = {label, value};
+
+		fileFields.push(field);
+		dbFields.push(field);
+	}
+
+	return [fileFields, dbFields];
+};
+
+export const buildDropdownItemsFromFields = (
+	fields,
+	searchLabel,
+	onClickCallback
+) => {
+	const searchedFields = fields?.filter((f) =>
+		searchLabel
+			? f.label.toLowerCase().includes(searchLabel.toLowerCase())
+			: true
+	);
+
+	const clickableFields =
+		searchedFields?.map((f) => ({
+			...f,
+			onClick: () => onClickCallback(f),
+		})) || [];
+
+	const requiredFields = clickableFields.filter((f) => f.required);
+	const optionalFields = clickableFields.filter((f) => !f.required);
+
+	return [requiredFields, optionalFields];
+};
+
+export const ImportFieldPropType = {
+	label: PropTypes.string.isRequired,
+	required: PropTypes.bool,
+	value: PropTypes.string.isRequired,
 };
