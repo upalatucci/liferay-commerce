@@ -36,7 +36,7 @@ function FileUpload({portletNamespace}) {
 		<span>
 			<ClayForm.Group>
 				<label htmlFor={inputNameId}>
-					{Liferay.Language.get('file')}
+					{Liferay.Language.get('csv-file')}
 				</label>
 
 				<ClayInput
