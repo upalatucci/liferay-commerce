@@ -29,33 +29,30 @@ function ImportForm({
 	portletNamespace,
 }) {
 	const [disable, setDisable] = useState(true);
-	const [fileFields, updateFileFields] = useState();
-	const [selectableDBFields, updateSelectableDBFields] = useState();
+	const [fileFields, setFileFields] = useState();
+	const [dbFields, setDbFields] = useState();
+	const [fieldsSelections, setFieldsSelections] = useState({});
 
-	const onFieldChange = useCallback(
-		(selectedItem, prevSelectedItem) => {
-			const newSelectableDBFields = selectableDBFields.filter(
-				(f) => f.value !== selectedItem.value
-			);
-
-			if (prevSelectedItem) {
-				newSelectableDBFields.push(prevSelectedItem);
-			}
-
-			updateSelectableDBFields(newSelectableDBFields);
-		},
-		[selectableDBFields]
-	);
+	const onFieldChange = useCallback((selectedItem, field) => {
+		setFieldsSelections((prevSelections) => ({
+			...prevSelections,
+			[field.value]: selectedItem,
+		}));
+	}, []);
 
 	useEffect(() => {
 		function handleSchemaUpdated(event) {
 			const newSchema = event.schema;
 			if (newSchema) {
-				const [newFileFields, newDBFields] = getFieldsFromSchema(
-					newSchema
-				);
-				updateFileFields(newFileFields);
-				updateSelectableDBFields(newDBFields);
+				const newDBFields = getFieldsFromSchema(newSchema);
+				setFileFields(newDBFields);
+				setDbFields(newDBFields);
+
+				const newFieldsSelection = {};
+				newDBFields.forEach((f) => {
+					newFieldsSelection[f.value] = null;
+				});
+				setFieldsSelections(newFieldsSelection);
 				setDisable(false);
 			}
 		}
@@ -64,6 +61,14 @@ function ImportForm({
 
 		return () => Liferay.detach('schema-selected', handleSchemaUpdated);
 	}, []);
+
+	const selectableFields =
+		dbFields?.filter(
+			(f) =>
+				!Object.values(fieldsSelections).find(
+					(s) => s?.value === f.value
+				)
+		) || [];
 
 	return (
 		<>
@@ -81,7 +86,10 @@ function ImportForm({
 										field={field}
 										key={field.label}
 										onChange={onFieldChange}
-										selectableFields={selectableDBFields}
+										selectableFields={selectableFields}
+										selectedField={
+											fieldsSelections[field.value]
+										}
 									/>
 								))}
 							</div>

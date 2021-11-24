@@ -13,27 +13,30 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {act, cleanup, fireEvent, render} from '@testing-library/react';
+import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 
 import ImportMappingItem from '../../../src/main/resources/META-INF/resources/js/import/ImportMappingItem';
 
-const BASE_PROPS = {
-	field: {
-		label: 'currencyCode',
-		value: 'currencyCode',
+const field = {
+	label: 'currencyCode',
+	value: 'currencyCode',
+};
+const selectableFields = [
+	{
+		label: 'test',
+		required: true,
+		value: 'test',
 	},
-	selectableFields: [
-		{
-			label: 'test',
-			required: true,
-			value: 'test',
-		},
-		{
-			label: 'testSelect',
-			value: 'testSelect',
-		},
-	],
+	{
+		label: 'testSelect',
+		value: 'testSelect',
+	},
+];
+
+const BASE_PROPS = {
+	field,
+	selectableFields,
 };
 
 describe('ImportMappingItem', () => {
@@ -55,9 +58,10 @@ describe('ImportMappingItem', () => {
 		getByText(BASE_PROPS.selectableFields[0].label);
 	});
 
-	it('must select the item when user click on the dropdown item', () => {
+	it('must call the onChange method on user click dropdown item not selected', () => {
+		const onChangeMock = jest.fn();
 		const {getByLabelText, getByText} = render(
-			<ImportMappingItem {...BASE_PROPS} />
+			<ImportMappingItem {...BASE_PROPS} onChange={onChangeMock} />
 		);
 
 		act(() => {
@@ -67,10 +71,53 @@ describe('ImportMappingItem', () => {
 		act(() => {
 			fireEvent.click(getByText(BASE_PROPS.selectableFields[0].label));
 		});
+		expect(onChangeMock).toBeCalledTimes(1);
+	});
 
-		expect(getByLabelText(BASE_PROPS.field.label).textContent).toBe(
-			BASE_PROPS.selectableFields[0].value
+	it('must not call the onChange method on user click dropdown item selected', () => {
+		const onChangeMock = jest.fn();
+		const {getByLabelText, getByRole} = render(
+			<ImportMappingItem
+				field={field}
+				onChange={onChangeMock}
+				selectableFields={selectableFields.filter(
+					(f) => f.label !== selectableFields[0].label
+				)}
+				selectedField={selectableFields[0]}
+			/>
 		);
+
+		act(() => {
+			fireEvent.click(getByLabelText(BASE_PROPS.field.label));
+		});
+
+		act(() => {
+			fireEvent.click(
+				within(getByRole('list')).getByText(selectableFields[0].label)
+			);
+		});
+
+		expect(onChangeMock).not.toBeCalled();
+	});
+
+	it('must show in the dropdown menu the item selected', () => {
+		const {getByLabelText, getByRole} = render(
+			<ImportMappingItem
+				field={field}
+				selectableFields={selectableFields.filter(
+					(f) => f.label !== selectableFields[0].label
+				)}
+				selectedField={selectableFields[0]}
+			/>
+		);
+
+		act(() => {
+			fireEvent.click(getByLabelText(field.label));
+		});
+
+		expect(
+			within(getByRole('list')).getByText(selectableFields[0].label)
+		).toBeInTheDocument();
 	});
 
 	it('must filter elements when search text is provided', () => {

@@ -23,9 +23,13 @@ import ImportMappingDropdownItem, {
 	ImportFieldPropType,
 } from './ImportMappingDropdownItem';
 
-const ImportMappingItem = ({field, onChange, selectableFields}) => {
+const ImportMappingItem = ({
+	field,
+	onChange,
+	selectableFields,
+	selectedField,
+}) => {
 	const [searchLabel, setSearchLabel] = useState();
-	const [selectedField, setSelectedField] = useState();
 	const [dropDownActive, setDropDownActive] = useState(false);
 
 	const [requiredFields, optionalFields] = useMemo(
@@ -33,9 +37,9 @@ const ImportMappingItem = ({field, onChange, selectableFields}) => {
 			buildDropdownItemsFromFields(
 				selectableFields,
 				searchLabel,
-				setSelectedField
+				selectedField
 			),
-		[selectableFields, searchLabel, setSelectedField]
+		[selectableFields, searchLabel, selectedField]
 	);
 
 	const inputId = `input-field-${field.label}`;
@@ -47,30 +51,27 @@ const ImportMappingItem = ({field, onChange, selectableFields}) => {
 	const onDropdownItemClick = useCallback(
 		(item) => {
 			if (onChange) {
-				onChange(item, selectedField);
+				onChange(item, field);
 			}
-
-			setSelectedField(item);
 			setDropDownActive(false);
 		},
-		[onChange, selectedField]
+		[field, onChange]
 	);
 
 	const selectFirstElement = useCallback(
 		(event) => {
 			event.preventDefault();
-
-			if (onChange) {
-				onChange(firstElement, selectedField);
-			}
-
 			const firstElement = requiredFields?.at(0) || optionalFields?.at(0);
+
 			if (firstElement) {
-				setSelectedField(firstElement);
+				if (onChange) {
+					onChange(firstElement, field);
+				}
 				setDropDownActive(false);
+				setSearchLabel();
 			}
 		},
-		[onChange, optionalFields, requiredFields, selectedField]
+		[field, onChange, optionalFields, requiredFields]
 	);
 
 	return (
@@ -110,6 +111,7 @@ const ImportMappingItem = ({field, onChange, selectableFields}) => {
 							header={Liferay.Language.get('required')}
 						>
 							<ClayDropDown.Divider />
+
 							{requiredFields.map((item) => (
 								<ImportMappingDropdownItem
 									item={item}
@@ -120,11 +122,13 @@ const ImportMappingItem = ({field, onChange, selectableFields}) => {
 							))}
 						</ClayDropDown.Group>
 					)}
+
 					{optionalFields.length > 0 && (
 						<ClayDropDown.Group
 							header={Liferay.Language.get('optional')}
 						>
 							<ClayDropDown.Divider />
+
 							{optionalFields.map((item) => (
 								<ImportMappingDropdownItem
 									item={item}
@@ -141,29 +145,40 @@ const ImportMappingItem = ({field, onChange, selectableFields}) => {
 	);
 };
 
-const buildDropdownItemsFromFields = (fields, searchLabel, onClickCallback) => {
-	const searchedFields = fields?.filter((f) =>
+const buildDropdownItemsFromFields = (
+	fields = [],
+	searchLabel,
+	selectedField
+) => {
+	const allFields = [...fields];
+
+	if (selectedField) {
+		allFields.push(selectedField);
+		allFields.sort((a, b) => (a.label > b.label ? 1 : -1));
+	}
+
+	const searchedFields = allFields.filter((f) =>
 		searchLabel
 			? f.label.toLowerCase().includes(searchLabel.toLowerCase())
 			: true
 	);
 
-	const clickableFields =
+	const dropdownItems =
 		searchedFields?.map((f) => ({
 			...f,
-			onClick: () => onClickCallback(f),
 		})) || [];
 
-	const requiredFields = clickableFields.filter((f) => f.required);
-	const optionalFields = clickableFields.filter((f) => !f.required);
+	const requiredFields = dropdownItems.filter((f) => f.required);
+	const optionalFields = dropdownItems.filter((f) => !f.required);
 
 	return [requiredFields, optionalFields];
 };
 
 ImportMappingItem.propTypes = {
-	field: PropTypes.shape(ImportFieldPropType),
+	field: PropTypes.shape(ImportFieldPropType).isRequired,
 	onChange: PropTypes.func,
 	selectableFields: PropTypes.arrayOf(PropTypes.shape(ImportFieldPropType)),
+	selectedField: PropTypes.shape(ImportFieldPropType),
 };
 
 export default ImportMappingItem;
