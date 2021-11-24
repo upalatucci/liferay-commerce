@@ -13,6 +13,7 @@
  */
 
 import ClayButton from '@clayui/button';
+import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
@@ -38,7 +39,7 @@ const SaveTemplateModal = ({
 
 		try {
 			const updateData = {[inputNameId]: inputValue};
-			const saveTemplateResponse = saveTemplateAPI(
+			const saveTemplateResponse = await saveTemplateAPI(
 				formDataQuerySelector,
 				updateData,
 				formSubmitURL
@@ -48,17 +49,14 @@ const SaveTemplateModal = ({
 				if (saveTemplateResponse.error) {
 					setLoadingResponse(false);
 					setErrorMessage(saveTemplateResponse.error);
-				}
-				else {
+				} else {
 					closeModal();
 				}
 			}
-		}
-		catch (error) {
+		} catch (error) {
 			setErrorMessage(Liferay.Language.get('unexpected-error'));
-		}
-		finally {
-			setLoadingResponse(true);
+		} finally {
+			setLoadingResponse(false);
 		}
 	};
 
@@ -68,14 +66,10 @@ const SaveTemplateModal = ({
 				{Liferay.Language.get('save-as-template')}
 			</ClayModal.Header>
 
-			<form id={`${namespace}form`} onSubmit={_handleSubmit}>
+			<ClayForm id={`${namespace}form`} onSubmit={_handleSubmit}>
 				<ClayModal.Body>
-					<div
-						className={`form-group ${
-							errorMessage ? 'has-error' : ''
-						}`}
-					>
-						<label className="control-label" htmlFor={inputNameId}>
+					<ClayForm.Group className={errorMessage ? 'has-error' : ''}>
+						<label htmlFor={inputNameId}>
 							{Liferay.Language.get('name')}
 
 							<span className="reference-mark">
@@ -83,9 +77,8 @@ const SaveTemplateModal = ({
 							</span>
 						</label>
 
-						<input
+						<ClayInput
 							autoFocus
-							className="form-control"
 							disabled={loadingResponse}
 							id={inputNameId}
 							name={inputNameId}
@@ -99,23 +92,20 @@ const SaveTemplateModal = ({
 						/>
 
 						{errorMessage && (
-							<div className="form-feedback-item">
-								<ClayIcon
-									className="inline-item inline-item-before"
-									symbol="exclamation-full"
-								/>
-
-								{errorMessage}
-							</div>
+							<ClayForm.FeedbackGroup>
+								<ClayForm.FeedbackItem>
+									<ClayForm.FeedbackIndicator symbol="exclamation-full" />
+									{errorMessage}
+								</ClayForm.FeedbackItem>
+							</ClayForm.FeedbackGroup>
 						)}
-					</div>
+					</ClayForm.Group>
 				</ClayModal.Body>
 
 				<ClayModal.Footer
 					last={
 						<ClayButton.Group spaced>
 							<ClayButton
-								disabled={loadingResponse}
 								displayType="secondary"
 								onClick={closeModal}
 							>
@@ -143,7 +133,7 @@ const SaveTemplateModal = ({
 						</ClayButton.Group>
 					}
 				/>
-			</form>
+			</ClayForm>
 		</ClayModal>
 	);
 };

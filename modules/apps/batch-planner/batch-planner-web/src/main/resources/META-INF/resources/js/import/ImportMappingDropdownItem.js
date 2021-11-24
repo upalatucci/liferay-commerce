@@ -22,8 +22,10 @@ const ImportMappingDropdownItem = ({item, onClick, selectedItem}) => {
 	const selected = selectedItem?.value === item.value;
 
 	const onItemClick = useCallback(() => {
-		onClick(item);
-	}, [item, onClick]);
+		if (!selected) {
+			onClick(item);
+		}
+	}, [item, onClick, selected]);
 
 	return (
 		<ClayDropDown.Item
@@ -33,6 +35,7 @@ const ImportMappingDropdownItem = ({item, onClick, selectedItem}) => {
 			<span className={classnames({'text-muted': selected})}>
 				{item.label}
 			</span>
+
 			{selected && <ClayIcon className="text-success" symbol="check" />}
 		</ClayDropDown.Item>
 	);

@@ -13,24 +13,26 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayIcon from '@clayui/icon';
+import ClayForm from '@clayui/form';
 import ClayModal from '@clayui/modal';
+import ClayProgressBar from '@clayui/progress-bar';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 
 const ImportModal = ({
 	closeModal,
-	formDataQuerySelector,
-	formSubmitURL,
+
+	// formDataQuerySelector,
+	// formSubmitURL,
+
 	namespace,
 	observer,
 }) => {
-	const inputNameId = namespace + 'name';
+	const [percentage] = useState();
 	const isMounted = useIsMounted();
 	const [errorMessage, setErrorMessage] = useState();
 	const [loadingResponse, setLoadingResponse] = useState(false);
-	const [inputValue, setInputValue] = useState('');
 
 	const _handleSubmit = async (event) => {
 		event.preventDefault();
@@ -42,14 +44,17 @@ const ImportModal = ({
 				if (saveTemplateResponse.error) {
 					setLoadingResponse(false);
 					setErrorMessage(saveTemplateResponse.error);
-				} else {
+				}
+				else {
 					closeModal();
 				}
 			}
-		} catch (error) {
+		}
+		catch (error) {
 			setErrorMessage(Liferay.Language.get('unexpected-error'));
-		} finally {
-			setLoadingResponse(true);
+		}
+		finally {
+			setLoadingResponse(false);
 		}
 	};
 
@@ -61,52 +66,38 @@ const ImportModal = ({
 
 			<form id={`${namespace}form`} onSubmit={_handleSubmit}>
 				<ClayModal.Body>
-					<div
-						className={`form-group ${
-							errorMessage ? 'has-error' : ''
-						}`}
-					>
-						<label className="control-label" htmlFor={inputNameId}>
-							{Liferay.Language.get('name')}
-
-							<span className="reference-mark">
-								<ClayIcon symbol="asterisk" />
-							</span>
-						</label>
-
-						<input
-							autoFocus
-							className="form-control"
-							disabled={loadingResponse}
-							id={inputNameId}
-							name={inputNameId}
-							onChange={(event) =>
-								setInputValue(event.target.value)
+					<ClayForm.Group className={errorMessage ? 'has-error' : ''}>
+						<div
+							className="progress-container"
+							data-percentage={percentage}
+							data-title={
+								percentage === 100
+									? Liferay.Language.get('completed')
+									: Liferay.Language.get('in-progress')
 							}
-							placeholder={Liferay.Language.get('template-name')}
-							required
-							type="text"
-							value={inputValue}
-						/>
+						>
+							<ClayProgressBar
+								value={percentage}
+								warn={!!errorMessage}
+							/>
+						</div>
 
 						{errorMessage && (
-							<div className="form-feedback-item">
-								<ClayIcon
-									className="inline-item inline-item-before"
-									symbol="exclamation-full"
-								/>
+							<ClayForm.FeedbackGroup>
+								<ClayForm.FeedbackItem>
+									<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 
-								{errorMessage}
-							</div>
+									{errorMessage}
+								</ClayForm.FeedbackItem>
+							</ClayForm.FeedbackGroup>
 						)}
-					</div>
+					</ClayForm.Group>
 				</ClayModal.Body>
 
 				<ClayModal.Footer
 					last={
 						<ClayButton.Group spaced>
 							<ClayButton
-								disabled={loadingResponse}
 								displayType="secondary"
 								onClick={closeModal}
 							>
@@ -114,9 +105,7 @@ const ImportModal = ({
 							</ClayButton>
 
 							<ClayButton
-								disabled={
-									loadingResponse || inputValue.length == 0
-								}
+								disabled={loadingResponse}
 								displayType="primary"
 								type="submit"
 							>
@@ -140,10 +129,12 @@ const ImportModal = ({
 };
 
 ImportModal.propTypes = {
-	closeModal: PropTypes.func.required,
-	formDataQuerySelector: PropTypes.string.required,
-	formSubmitURL: PropTypes.string.required,
-	namespace: PropTypes.string.required,
+	closeModal: PropTypes.func.isRequired,
+
+	// formDataQuerySelector: PropTypes.string.isRequired,
+	// formSubmitURL: PropTypes.string.isRequired,
+
+	namespace: PropTypes.string.isRequired,
 	observer: PropTypes.object,
 };
 
