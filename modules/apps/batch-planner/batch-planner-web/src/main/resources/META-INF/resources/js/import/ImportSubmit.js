@@ -19,7 +19,7 @@ import React, {useCallback, useState} from 'react';
 
 import ImportModal from './ImportModal';
 
-function Import({
+function ImportSubmit({
 	disabled,
 	formImportDataQuerySelector,
 	formImportURL,
@@ -38,7 +38,7 @@ function Import({
 			<ClayButton
 				disabled={disabled}
 				displayType="primary"
-				id={`${portletNamespace}Import`}
+				id={`${portletNamespace}-import-submit`}
 				onClick={onButtonClick}
 				type="button"
 			>
@@ -58,11 +58,11 @@ function Import({
 	);
 }
 
-Import.propTypes = {
-	disabled: PropTypes.bool.required,
-	formImportDataQuerySelector: PropTypes.string.required,
-	formImportURL: PropTypes.string.required,
-	portletNamespace: PropTypes.string.required,
+ImportSubmit.propTypes = {
+	disabled: PropTypes.bool.isRequired,
+	formImportDataQuerySelector: PropTypes.string.isRequired,
+	formImportURL: PropTypes.string.isRequired,
+	portletNamespace: PropTypes.string.isRequired,
 };
 
-export default Import;
+export default ImportSubmit;
