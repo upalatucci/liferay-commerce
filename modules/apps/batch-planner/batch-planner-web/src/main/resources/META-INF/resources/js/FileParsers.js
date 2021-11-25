@@ -24,13 +24,7 @@ function extractFieldsFromCSV(content, fieldSeparator) {
 	}
 }
 
-export function parseCSV({
-	fieldSeparator = ',',
-	file,
-	onComplete,
-	onError,
-	onProgress,
-}) {
+export function parseCSV({fieldSeparator = ',', file, onComplete, onError}) {
 	let abort = false;
 	const fileSize = file.size;
 	let offset = 0;
@@ -57,10 +51,7 @@ export function parseCSV({
 		if (fields) {
 			return onComplete(fields);
 		}
-		else if (offset < fileSize) {
-			onProgress({loaded: offset, total: fileSize});
-		}
-		else {
+		else if (offset >= fileSize) {
 			return onError();
 		}
 
