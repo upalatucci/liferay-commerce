@@ -15,12 +15,8 @@
 import {useIsMounted} from '@liferay/frontend-js-react-web';
 import {useCallback, useEffect, useReducer} from 'react';
 
-import {
-	fetchExportedFile,
-	getExportStatus,
-	startExport,
-} from '../BatchPlannerExport';
-import {EXPORT_FILE_NAME, POLL_INTERVAL} from '../constants';
+import {getImportStatus, startImport} from '../BatchPlannerImport';
+import {POLL_INTERVAL} from '../constants';
 
 const ERROR = 'ERROR';
 const COMPLETED = 'COMPLETED';
@@ -30,12 +26,11 @@ const START_POLLING = 'START_POLLING';
 const STOP_LOADING = 'DOWNLOADING';
 
 const initialState = {
-	contentType: null,
 	errorMessage: null,
 	loading: false,
 	percentage: 0,
 	pollingIntervalId: null,
-	readyToDownload: false,
+	ready: false,
 	taskId: null,
 };
 
@@ -44,13 +39,13 @@ const setError = (error) => ({
 	type: ERROR,
 });
 
-const setTaskId = (contentType, taskId) => ({
-	payload: {contentType, taskId},
+const setTaskId = (taskId) => ({
+	payload: taskId,
 	type: COMPLETED,
 });
 
-const setProgress = (contentType, percentage) => ({
-	payload: {contentType, percentage},
+const setProgress = (percentage) => ({
+	payload: percentage,
 	type: PROGRESS,
 });
 
@@ -80,18 +75,16 @@ const reducer = (state = initialState, {payload, type}) => {
 
 			return {
 				...state,
-				contentType: payload.contentType,
 				loading: false,
 				percentage: 100,
 				pollingIntervalId: null,
-				readyToDownload: true,
-				taskId: payload.taskId,
+				ready: true,
+				taskId: payload,
 			};
 		case PROGRESS:
 			return {
 				...state,
-				contentType: payload.contentType,
-				percentage: payload.percentage,
+				percentage: payload,
 			};
 		case START_POLLING:
 			return {
@@ -103,7 +96,7 @@ const reducer = (state = initialState, {payload, type}) => {
 	}
 };
 
-const ExportPoller = (formDataQuerySelector, formSubmitURL) => {
+const ImportPoller = (fieldsMap, formDataQuerySelector, formSubmitURL) => {
 	const isMounted = useIsMounted();
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -116,38 +109,15 @@ const ExportPoller = (formDataQuerySelector, formSubmitURL) => {
 		[dispatch, isMounted]
 	);
 
-	const download = (url, filename) => {
-		var a = document.createElement('a');
-		document.body.appendChild(a);
-		a.style.display = 'none';
-		a.href = url;
-		a.download = filename;
-		a.click();
-		window.URL.revokeObjectURL(url);
-	};
-
-	const downloadFile = useCallback(async () => {
-		dispatchIfMounted({type: LOADING});
-		try {
-			const blobUrl = await fetchExportedFile(state.taskId);
-			download(blobUrl, EXPORT_FILE_NAME);
-
-			dispatchIfMounted({type: STOP_LOADING});
-		}
-		catch (error) {
-			console.error(error);
-			dispatchIfMounted(setError());
-		}
-	}, [dispatchIfMounted, state.taskId]);
-
 	useEffect(() => {
 		let pollingIntervalId;
 
-		async function callStartExport() {
+		async function callStartImport() {
 			dispatchIfMounted({type: LOADING});
 
 			try {
-				const {error, exportTaskId} = await startExport(
+				const {error, importTaskId} = await startImport(
+					fieldsMap,
 					formDataQuerySelector,
 					formSubmitURL
 				);
@@ -158,18 +128,14 @@ const ExportPoller = (formDataQuerySelector, formSubmitURL) => {
 
 				pollingIntervalId = setInterval(
 					() =>
-						getExportStatus({
+						getImportStatus({
 							onFail: (error) =>
 								dispatchIfMounted(setError(error)),
-							onProgress: (contentType, percent) =>
-								dispatchIfMounted(
-									setProgress(contentType, percent)
-								),
-							onSuccess: (contentType) =>
-								dispatchIfMounted(
-									setTaskId(contentType, exportTaskId)
-								),
-							taskId: exportTaskId,
+							onProgress: (percent) =>
+								dispatchIfMounted(setProgress(percent)),
+							onSuccess: () =>
+								dispatchIfMounted(setTaskId(importTaskId)),
+							taskId: importTaskId,
 						}),
 					POLL_INTERVAL
 				);
@@ -185,23 +151,27 @@ const ExportPoller = (formDataQuerySelector, formSubmitURL) => {
 			}
 		}
 
-		callStartExport();
+		callStartImport();
 
 		return () => {
 			if (pollingIntervalId) {
 				clearInterval(pollingIntervalId);
 			}
 		};
-	}, [dispatchIfMounted, formDataQuerySelector, formSubmitURL, isMounted]);
+	}, [
+		dispatchIfMounted,
+		fieldsMap,
+		formDataQuerySelector,
+		formSubmitURL,
+		isMounted,
+	]);
 
 	return {
-		contentType: state.contentType,
-		downloadFile,
 		errorMessage: state.errorMessage,
 		loading: state.loading,
 		percentage: state.percentage,
-		readyToDownload: state.readyToDownload,
+		ready: state.ready,
 	};
 };
 
-export default ExportPoller;
+export default ImportPoller;

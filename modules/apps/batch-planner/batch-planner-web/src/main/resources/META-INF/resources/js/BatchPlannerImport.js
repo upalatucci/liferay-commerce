@@ -21,20 +21,25 @@ import {
 	PROCESS_FAILED,
 } from './constants';
 
-export function getExportTaskStatusURL(taskId) {
-	return `${HEADLESS_BATCH_ENGINE_URL}/export-task/${taskId}`;
+export function getImportTaskStatusURL(taskId) {
+	return `${HEADLESS_BATCH_ENGINE_URL}/import-task/${taskId}`;
 }
 
-export function getExportFileURL(taskId) {
-	return `${HEADLESS_BATCH_ENGINE_URL}/export-task/${taskId}/content`;
+export function getImportFileURL(taskId) {
+	return `${HEADLESS_BATCH_ENGINE_URL}/import-task/${taskId}/content`;
 }
 
-export async function saveTemplateAPI(formDataQuerySelector, updateData, url) {
+export async function startImport(
+	fieldsMap,
+	formDataQuerySelector,
+	formSubmitURL
+) {
 	const mainFormData = document.querySelector(formDataQuerySelector);
-	Liferay.Util.setFormValues(mainFormData, updateData);
-
 	const formData = new FormData(mainFormData);
-	const response = await fetch(url, {
+
+	console.log(formData);
+
+	const response = await fetch(formSubmitURL, {
 		body: formData,
 		headers: HEADERS,
 		method: 'POST',
@@ -43,37 +48,22 @@ export async function saveTemplateAPI(formDataQuerySelector, updateData, url) {
 	return await response.json();
 }
 
-export async function startExport(formDataQuerySelector, url) {
-	const mainFormData = document.querySelector(formDataQuerySelector);
-
-	const formData = new FormData(mainFormData);
-
-	const response = await fetch(url, {
-		body: formData,
-		headers: HEADERS,
-		method: 'POST',
-	});
-
-	return await response.json();
-}
-
-export async function exportStatus(exportTaskId) {
-	const response = await fetch(getExportTaskStatusURL(exportTaskId), {
+export async function importStatus(exportTaskId) {
+	const response = await fetch(getImportTaskStatusURL(exportTaskId), {
 		headers: HEADERS,
 	});
 
 	return await response.json();
 }
 
-export async function getExportStatus({onFail, onProgress, onSuccess, taskId}) {
+export async function getImportStatus({onFail, onProgress, onSuccess, taskId}) {
 	try {
 		const {
-			contentType,
 			errorMessage,
 			executeStatus,
 			processedItemsCount,
 			totalItemsCount,
-		} = await exportStatus(taskId);
+		} = await importStatus(taskId);
 
 		switch (executeStatus) {
 			case PROCESS_FAILED:
@@ -82,11 +72,10 @@ export async function getExportStatus({onFail, onProgress, onSuccess, taskId}) {
 				);
 				break;
 			case PROCESS_COMPLETED:
-				onSuccess(contentType);
+				onSuccess();
 				break;
 			default:
 				onProgress(
-					contentType,
 					Math.round((processedItemsCount / totalItemsCount) * 100)
 				);
 		}
@@ -94,11 +83,4 @@ export async function getExportStatus({onFail, onProgress, onSuccess, taskId}) {
 	catch (error) {
 		onFail(Liferay.Language.get('unexpected-error'));
 	}
-}
-
-export async function fetchExportedFile(taskId) {
-	const response = await fetch(getExportFileURL(taskId));
-	const blob = await response.blob();
-
-	return URL.createObjectURL(blob);
 }
