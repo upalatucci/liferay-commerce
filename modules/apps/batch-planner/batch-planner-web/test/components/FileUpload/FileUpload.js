@@ -39,83 +39,19 @@ describe('FileUpload', () => {
 	afterEach(cleanup);
 
 	it('must read the file on input change', async () => {
-		parseCSV.mockImplementationOnce(({onProgress}) =>
-			onProgress({loaded: 50, total: 100})
-		);
-
-		const {getByRole, getByText} = render(
-			<FileUpload portletNamespace="test" />
-		);
-
-		act(() => {
-			fireEvent.change(getByRole('textbox'), {target: {files: [file]}});
-		});
-
-		await wait(() => {
-			getByText(Liferay.Language.get('file-upload'));
-		});
-
-		expect(parseCSV).toBeCalled();
-	});
-
-	it('must loading primary button on reading file', async () => {
-		parseCSV.mockImplementationOnce(({onProgress}) =>
-			onProgress({loaded: 50, total: 100})
-		);
-
-		const {getByRole, getByText} = render(
-			<FileUpload portletNamespace="test" />
-		);
-
-		act(() => {
-			fireEvent.change(getByRole('textbox'), {target: {files: [file]}});
-		});
-
-		await wait(() => {
-			getByText(Liferay.Language.get('file-upload'));
-		});
-
-		expect(getByText(Liferay.Language.get('done'))).toBeDisabled();
-	});
-
-	it('must enable button on file process ended', async () => {
-		parseCSV.mockImplementationOnce(({onComplete}) => onComplete());
-
-		const {getByRole, getByText} = render(
-			<FileUpload portletNamespace="test" />
-		);
-
-		act(() => {
-			fireEvent.change(getByRole('textbox'), {target: {files: [file]}});
-		});
-
-		await wait(() => {
-			getByText(Liferay.Language.get('file-upload'));
-		});
-
-		expect(getByText(Liferay.Language.get('done'))).not.toBeDisabled();
-	});
-
-	it('must fire file-schema event on file process ended', async () => {
-		const mockFileShemaListener = jest.fn();
-		Liferay.on('file-schema', mockFileShemaListener);
+		const mockFileSchemaListener = jest.fn();
+		Liferay.on('file-schema', mockFileSchemaListener);
 		parseCSV.mockImplementationOnce(({onComplete}) =>
 			onComplete(fileSchema)
 		);
 
-		const {getByRole, getByText} = render(
-			<FileUpload portletNamespace="test" />
-		);
+		const {getByRole} = render(<FileUpload portletNamespace="test" />);
 
 		act(() => {
 			fireEvent.change(getByRole('textbox'), {target: {files: [file]}});
 		});
 
-		await wait(() => {
-			getByText(Liferay.Language.get('file-upload'));
-		});
-
-		expect(mockFileShemaListener.mock.calls[0][0].schema).toStrictEqual(
+		expect(mockFileSchemaListener.mock.calls[0][0].schema).toStrictEqual(
 			fileSchema
 		);
 	});

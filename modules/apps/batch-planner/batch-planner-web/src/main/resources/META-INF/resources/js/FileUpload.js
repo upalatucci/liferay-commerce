@@ -13,47 +13,72 @@
  */
 
 import ClayForm, {ClayInput} from '@clayui/form';
-import {useModal} from '@clayui/modal';
+import {useIsMounted} from '@liferay/frontend-js-react-web';
 import React, {useCallback, useState} from 'react';
 
-import FileUploadModal from './FileUploadModal';
+import {parseCSV} from './FileParsers';
 
 function FileUpload({portletNamespace}) {
-	const [visible, setVisible] = useState(false);
-	const [fileToInspect, setFileToInspect] = useState();
-	const {observer, onClose} = useModal({
-		onClose: () => setVisible(false),
-	});
+	const isMounted = useIsMounted();
+	const [errorMessage, setErrorMessage] = useState();
 
-	const onFileChange = useCallback((event) => {
-		setVisible(true);
-		setFileToInspect(event.target?.files[0]);
-	}, []);
+	const onFileChange = useCallback(
+		(event) => {
+			const fileToInspect = event?.target?.files[0];
+			if (!fileToInspect) {
+				return;
+			}
+
+			const onComplete = (schema) => {
+				if (isMounted()) {
+					Liferay.fire('file-schema', {
+						schema,
+					});
+				}
+			};
+
+			const onError = () => {
+				if (isMounted()) {
+					setErrorMessage(Liferay.Language.get('unexpected-error'));
+				}
+			};
+
+			return parseCSV({
+				file: fileToInspect,
+				onComplete,
+				onError,
+			});
+		},
+		[isMounted]
+	);
 
 	const inputNameId = `${portletNamespace}-import-file`;
 
 	return (
 		<span>
-			<ClayForm.Group>
+			<ClayForm.Group className={errorMessage ? 'has-error' : ''}>
 				<label htmlFor={inputNameId}>
 					{Liferay.Language.get('csv-file')}
 				</label>
 
 				<ClayInput
+					accept=".csv"
 					id={inputNameId}
 					name={inputNameId}
 					onChange={onFileChange}
 					type="file"
 				/>
-			</ClayForm.Group>
 
-			{visible && (
-				<FileUploadModal
-					closeModal={onClose}
-					fileToInspect={fileToInspect}
-					observer={observer}
-				/>
-			)}
+				{errorMessage && (
+					<ClayForm.FeedbackGroup>
+						<ClayForm.FeedbackItem>
+							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
+
+							{errorMessage}
+						</ClayForm.FeedbackItem>
+					</ClayForm.FeedbackGroup>
+				)}
+			</ClayForm.Group>
 		</span>
 	);
 }
