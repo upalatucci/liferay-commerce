@@ -109,7 +109,9 @@ function ImportForm({
 
 					<span>
 						<SaveTemplate
-							formDataQuerySelector={formDataQuerySelector}
+							formSaveAsTemplateDataQuerySelector={
+								formDataQuerySelector
+							}
 							formSaveAsTemplateURL={formSaveAsTemplateURL}
 							portletNamespace={portletNamespace}
 						/>
@@ -117,7 +119,8 @@ function ImportForm({
 
 					<ImportSubmit
 						disabled={!(fileFields && dbFields)}
-						formImportDataQuerySelector={formDataQuerySelector}
+						fieldsMap={fieldsSelections}
+						formDataQuerySelector={formDataQuerySelector}
 						formImportURL={formImportURL}
 						portletNamespace={portletNamespace}
 					/>
