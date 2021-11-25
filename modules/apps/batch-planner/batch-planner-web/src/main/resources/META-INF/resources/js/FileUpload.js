@@ -20,14 +20,14 @@ import FileUploadModal from './FileUploadModal';
 
 function FileUpload({portletNamespace}) {
 	const [visible, setVisible] = useState(false);
-	const [fileToUpload, setFileToUpload] = useState();
+	const [fileToInspect, setFileToInspect] = useState();
 	const {observer, onClose} = useModal({
 		onClose: () => setVisible(false),
 	});
 
 	const onFileChange = useCallback((event) => {
 		setVisible(true);
-		setFileToUpload(event.target?.files[0]);
+		setFileToInspect(event.target?.files[0]);
 	}, []);
 
 	const inputNameId = `${portletNamespace}-import-file`;
@@ -50,7 +50,7 @@ function FileUpload({portletNamespace}) {
 			{visible && (
 				<FileUploadModal
 					closeModal={onClose}
-					fileToUpload={fileToUpload}
+					fileToUpload={fileToInspect}
 					observer={observer}
 				/>
 			)}

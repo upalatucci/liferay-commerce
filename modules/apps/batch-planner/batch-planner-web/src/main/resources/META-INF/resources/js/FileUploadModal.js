@@ -20,38 +20,43 @@ import {useIsMounted} from '@liferay/frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
-const FileUploadModal = ({closeModal, observer}) => {
+import getFileParser from './FileParsers';
+
+const FileUploadModal = ({closeModal, fileToUpload, observer}) => {
 	const [percentage, setPercentage] = useState(0);
 	const isMounted = useIsMounted();
 	const [errorMessage, setErrorMessage] = useState();
-	const [loadingResponse, setLoadingResponse] = useState(false);
 
 	useEffect(() => {
 		async function uploadFile() {
-			setLoadingResponse(true);
 			try {
-				const saveTemplateResponse = {qualcosa: 'ciao'};
+				var reader = new FileReader();
 
-				if (isMounted()) {
-					if (saveTemplateResponse.error) {
-						setLoadingResponse(false);
-						setErrorMessage(saveTemplateResponse.error);
-					}
-					else {
-						setPercentage(100);
-					}
-				}
+				reader.addEventListener('load', () => {
+					setPercentage(100);
+					Liferay.fire(
+						'file-schema',
+						getFileParser('CSV')(reader.result)
+					);
+				});
+
+				reader.addEventListener('progress', (event) => {
+					setPercentage(
+						Math.round((event.loaded / event.total) * 100)
+					);
+				});
+
+				reader.readAsText(fileToUpload);
 			}
 			catch (error) {
 				setErrorMessage(Liferay.Language.get('unexpected-error'));
 			}
-			finally {
-				setLoadingResponse(false);
-			}
 		}
 
 		uploadFile();
-	}, [isMounted]);
+	}, [isMounted, fileToUpload]);
+
+	const isLoading = percentage !== 100;
 
 	return (
 		<ClayModal observer={observer} size="md">
@@ -65,9 +70,9 @@ const FileUploadModal = ({closeModal, observer}) => {
 						className="progress-container"
 						data-percentage={percentage}
 						data-title={
-							percentage === 100
-								? Liferay.Language.get('completed')
-								: Liferay.Language.get('in-progress')
+							isLoading
+								? Liferay.Language.get('in-progress')
+								: Liferay.Language.get('completed')
 						}
 					>
 						<ClayProgressBar
@@ -98,23 +103,25 @@ const FileUploadModal = ({closeModal, observer}) => {
 							{Liferay.Language.get('cancel')}
 						</ClayButton>
 
-						<ClayButton
-							disabled={loadingResponse}
-							displayType="primary"
-							onClick={closeModal}
-							type="button"
-						>
-							{loadingResponse && (
-								<span className="inline-item inline-item-before">
-									<span
-										aria-hidden="true"
-										className="loading-animation"
-									></span>
-								</span>
-							)}
+						{!errorMessage && (
+							<ClayButton
+								disabled={isLoading}
+								displayType="primary"
+								onClick={closeModal}
+								type="button"
+							>
+								{isLoading && (
+									<span className="inline-item inline-item-before">
+										<span
+											aria-hidden="true"
+											className="loading-animation"
+										></span>
+									</span>
+								)}
 
-							{Liferay.Language.get('done')}
-						</ClayButton>
+								{Liferay.Language.get('done')}
+							</ClayButton>
+						)}
 					</ClayButton.Group>
 				}
 			/>
