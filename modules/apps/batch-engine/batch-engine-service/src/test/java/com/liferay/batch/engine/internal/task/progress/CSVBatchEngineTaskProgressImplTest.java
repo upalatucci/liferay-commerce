@@ -19,6 +19,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
+import java.util.Iterator;
+
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -27,7 +29,7 @@ import org.junit.Test;
 /**
  * @author Matija Petanjek
  */
-public class JSONBatchEngineTaskProgressImplTest
+public class CSVBatchEngineTaskProgressImplTest
 	extends BaseBatchEngineTaskProgressImplTestCase {
 
 	@ClassRule
@@ -37,40 +39,42 @@ public class JSONBatchEngineTaskProgressImplTest
 
 	@Test
 	public void testGetTotalItems() throws Exception {
-		_testGetTotalItemsCount(0, true);
-		_testGetTotalItemsCount(PRODUCTS_COUNT, false);
-		_testGetTotalItemsCount(0, true);
+		_testGetTotalItemsCount(PRODUCTS_COUNT);
+		_testGetTotalItemsCount(0);
 	}
 
-	private void _testGetTotalItemsCount(
-			int expectedTotalItemsCount, boolean invalidJSONSyntax)
+	private void _testGetTotalItemsCount(int expectedTotalItemsCount)
 		throws Exception {
 
 		StringBundler sb = new StringBundler();
 
-		sb.append(StringPool.OPEN_BRACKET);
+		Iterator<String> iterator = productJSONObject.keys();
 
-		for (int i = 0; i < expectedTotalItemsCount; i++) {
-			sb.append(productJSONObject.toString());
+		while (iterator.hasNext()) {
+			sb.append(iterator.next());
 
-			if (i < (PRODUCTS_COUNT - 1)) {
+			if (iterator.hasNext()) {
 				sb.append(StringPool.COMMA);
 			}
 		}
 
-		if (!invalidJSONSyntax) {
-			sb.append(StringPool.CLOSE_BRACKET);
+		for (int i = 0; i < expectedTotalItemsCount; i++) {
+			sb.append(StringPool.NEW_LINE);
+
+			for (String key : productJSONObject.keySet()) {
+				sb.append(productJSONObject.getString(key));
+				sb.append(StringPool.COMMA);
+			}
 		}
 
 		Assert.assertEquals(
 			expectedTotalItemsCount,
 			_batchEngineTaskProgress.getTotalItemsCount(
 				compress(
-					sb.toString(),
-					BatchEngineTaskContentType.JSON.toString())));
+					sb.toString(), BatchEngineTaskContentType.CSV.toString())));
 	}
 
 	private static final BatchEngineTaskProgress _batchEngineTaskProgress =
-		new JSONBatchEngineTaskProgressImpl();
+		new CSVBatchEngineTaskProgressImpl();
 
 }
