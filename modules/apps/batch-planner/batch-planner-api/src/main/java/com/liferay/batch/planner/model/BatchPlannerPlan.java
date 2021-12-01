@@ -65,4 +65,6 @@ public interface BatchPlannerPlan
 	public BatchPlannerLog getBatchPlannerLog()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public java.util.List<BatchPlannerMapping> getBatchPlannerMappings();
+
 }
