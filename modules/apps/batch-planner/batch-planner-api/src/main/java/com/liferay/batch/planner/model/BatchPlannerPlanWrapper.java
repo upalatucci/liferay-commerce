@@ -182,6 +182,11 @@ public class BatchPlannerPlanWrapper
 		return model.getBatchPlannerLog();
 	}
 
+	@Override
+	public java.util.List<BatchPlannerMapping> getBatchPlannerMappings() {
+		return model.getBatchPlannerMappings();
+	}
+
 	/**
 	 * Returns the batch planner plan ID of this batch planner plan.
 	 *
