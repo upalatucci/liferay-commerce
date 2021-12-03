@@ -17,7 +17,7 @@ import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
-import {fetch} from 'frontend-js-web';
+import {fetch, openToast} from 'frontend-js-web';
 import React, {useState} from 'react';
 
 import {HEADERS} from './constants';
@@ -66,6 +66,11 @@ const SaveTemplateModal = ({
 					setErrorMessage(saveTemplateResponse.error);
 				}
 				else {
+					openToast({
+						message: Liferay.Language.get('template-created'),
+						type: 'success',
+					});
+
 					closeModal();
 				}
 			}
