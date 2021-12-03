@@ -197,6 +197,18 @@ public class BatchPlannerPlanWrapper
 		return model.getBatchPlannerPlanId();
 	}
 
+	@Override
+	public java.util.List<BatchPlannerPolicy> getBatchPlannerPolicies() {
+		return model.getBatchPlannerPolicies();
+	}
+
+	@Override
+	public BatchPlannerPolicy getBatchPlannerPolicy(String name)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getBatchPlannerPolicy(name);
+	}
+
 	/**
 	 * Returns the company ID of this batch planner plan.
 	 *
