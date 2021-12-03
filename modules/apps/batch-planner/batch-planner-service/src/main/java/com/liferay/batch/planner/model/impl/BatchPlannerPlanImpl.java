@@ -16,8 +16,10 @@ package com.liferay.batch.planner.model.impl;
 
 import com.liferay.batch.planner.model.BatchPlannerLog;
 import com.liferay.batch.planner.model.BatchPlannerMapping;
+import com.liferay.batch.planner.model.BatchPlannerPolicy;
 import com.liferay.batch.planner.service.BatchPlannerLogLocalServiceUtil;
 import com.liferay.batch.planner.service.BatchPlannerMappingLocalServiceUtil;
+import com.liferay.batch.planner.service.BatchPlannerPolicyLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
@@ -43,6 +45,20 @@ public class BatchPlannerPlanImpl extends BatchPlannerPlanBaseImpl {
 	public List<BatchPlannerMapping> getBatchPlannerMappings() {
 		return BatchPlannerMappingLocalServiceUtil.getBatchPlannerMappings(
 			getBatchPlannerPlanId());
+	}
+
+	@Override
+	public List<BatchPlannerPolicy> getBatchPlannerPolicies() {
+		return BatchPlannerPolicyLocalServiceUtil.getBatchPlannerPolicies(
+			getBatchPlannerPlanId());
+	}
+
+	@Override
+	public BatchPlannerPolicy getBatchPlannerPolicy(String name)
+		throws PortalException {
+
+		return BatchPlannerPolicyLocalServiceUtil.getBatchPlannerPolicy(
+			getBatchPlannerPlanId(), name);
 	}
 
 }
