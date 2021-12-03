@@ -17,8 +17,10 @@ package com.liferay.batch.planner.web.internal.display.context;
 import com.liferay.batch.engine.BatchEngineTaskContentType;
 import com.liferay.batch.planner.model.BatchPlannerMapping;
 import com.liferay.batch.planner.model.BatchPlannerPlan;
+import com.liferay.batch.planner.model.BatchPlannerPolicy;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.SelectOption;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,9 +38,10 @@ import java.util.stream.Stream;
 public class EditBatchPlannerPlanDisplayContext {
 
 	public EditBatchPlannerPlanDisplayContext(
-		List<BatchPlannerPlan> batchPlannerPlans,
-		Map<String, String> headlessEndpoints,
-		BatchPlannerPlan selectedBatchPlannerPlan) {
+			List<BatchPlannerPlan> batchPlannerPlans,
+			Map<String, String> headlessEndpoints,
+			BatchPlannerPlan selectedBatchPlannerPlan)
+		throws PortalException {
 
 		_headlessEndpoints = Collections.unmodifiableMap(headlessEndpoints);
 
@@ -47,6 +50,7 @@ public class EditBatchPlannerPlanDisplayContext {
 			_selectedBatchPlannerPlanId = 0;
 			_selectedBatchPlannerPlanName = StringPool.BLANK;
 			_selectedExternalType = StringPool.BLANK;
+			_selectedHeadlessEndpoint = StringPool.BLANK;
 			_selectedInternalClassName = StringPool.BLANK;
 		}
 		else {
@@ -56,6 +60,8 @@ public class EditBatchPlannerPlanDisplayContext {
 				selectedBatchPlannerPlan.getBatchPlannerPlanId();
 			_selectedBatchPlannerPlanName = selectedBatchPlannerPlan.getName();
 			_selectedExternalType = selectedBatchPlannerPlan.getExternalType();
+			_selectedHeadlessEndpoint = _getSelectedHeadlessEndpoint(
+				selectedBatchPlannerPlan);
 			_selectedInternalClassName =
 				selectedBatchPlannerPlan.getInternalClassName();
 		}
@@ -96,6 +102,10 @@ public class EditBatchPlannerPlanDisplayContext {
 
 	public String getSelectedExternalType() {
 		return _selectedExternalType;
+	}
+
+	public String getSelectedHeadlessEndpoint() {
+		return _selectedHeadlessEndpoint;
 	}
 
 	public String getSelectedInternalClassName() {
@@ -141,6 +151,16 @@ public class EditBatchPlannerPlanDisplayContext {
 		return selectedBatchPlannerMappings;
 	}
 
+	private String _getSelectedHeadlessEndpoint(
+			BatchPlannerPlan batchPlannerPlan)
+		throws PortalException {
+
+		BatchPlannerPolicy batchPlannerPolicy =
+			batchPlannerPlan.getBatchPlannerPolicy("headlessEndpoint");
+
+		return batchPlannerPolicy.getValue();
+	}
+
 	private List<SelectOption> _getTemplateSelectOptions(
 		List<BatchPlannerPlan> batchPlannerPlans) {
 
@@ -170,6 +190,7 @@ public class EditBatchPlannerPlanDisplayContext {
 	private final long _selectedBatchPlannerPlanId;
 	private final String _selectedBatchPlannerPlanName;
 	private final String _selectedExternalType;
+	private final String _selectedHeadlessEndpoint;
 	private final String _selectedInternalClassName;
 	private final List<SelectOption> _templateSelectOptions;
 
