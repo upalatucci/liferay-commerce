@@ -15,13 +15,20 @@
 import ClayForm, {ClaySelect} from '@clayui/form';
 import {fetch, openToast} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
-import {HEADERS_BATCH_PLANNER_URL, TEMPLATE_SELECTED_EVENT} from './constants';
+import {
+	HEADERS_BATCH_PLANNER_URL,
+	HEADLESS_ENDPOINT_POLICY_NAME,
+	NULL_TEMPLATE_VALUE,
+	TEMPLATE_DIRTY,
+	TEMPLATE_SELECTED_EVENT,
+} from './constants';
 
 const TemplateSelect = ({
 	portletNamespace,
 	selectedTemplateClassName,
+	selectedTemplateHeadlessEndpoint,
 	selectedTemplateMapping,
 	templatesOptions,
 }) => {
@@ -29,14 +36,44 @@ const TemplateSelect = ({
 		templatesOptions.find((option) => option.selected)?.value
 	);
 
-	useEffect(() => {
-		if (selectedTemplateMapping && selectedTemplateClassName) {
+	const handleLoadingTemplateOnStart = useCallback(() => {
+		if (
+			selectedTemplateMapping &&
+			selectedTemplateClassName &&
+			selectedTemplateHeadlessEndpoint
+		) {
 			Liferay.fire(TEMPLATE_SELECTED_EVENT, {
 				templateClassName: selectedTemplateClassName,
+				templateHeadlessEndpoint: selectedTemplateHeadlessEndpoint,
 				templateMapping: selectedTemplateMapping,
 			});
 		}
-	}, [selectedTemplateClassName, selectedTemplateMapping]);
+	}, [
+		selectedTemplateClassName,
+		selectedTemplateHeadlessEndpoint,
+		selectedTemplateMapping,
+	]);
+
+	useEffect(() => {
+		function handleTemplateDirty() {
+			setTemplate(NULL_TEMPLATE_VALUE);
+		}
+
+		Liferay.on(TEMPLATE_DIRTY, handleTemplateDirty);
+
+		document.addEventListener(
+			'readystatechange',
+			handleLoadingTemplateOnStart
+		);
+
+		return () => {
+			Liferay.detach(TEMPLATE_DIRTY, handleTemplateDirty);
+			document.removeEventListener(
+				'readystatechange',
+				handleLoadingTemplateOnStart
+			);
+		};
+	}, [handleLoadingTemplateOnStart]);
 
 	const onChange = (event) => {
 		const newTemplateId = event.target.value;
@@ -44,7 +81,7 @@ const TemplateSelect = ({
 		fireTemplateSelectionEvent(newTemplateId);
 	};
 
-	const selectId = `${portletNamespace}template`;
+	const selectId = `${portletNamespace}templateName`;
 
 	return (
 		<ClayForm.Group className="form-group-sm">
@@ -56,7 +93,7 @@ const TemplateSelect = ({
 				onChange={onChange}
 				value={selectedTemplateId}
 			>
-				<ClaySelect.Option key={0} value={0} />
+				<ClaySelect.Option key={0} value={NULL_TEMPLATE_VALUE} />
 
 				{templatesOptions.map((option) => (
 					<ClaySelect.Option
@@ -72,8 +109,9 @@ const TemplateSelect = ({
 
 TemplateSelect.propTypes = {
 	portletNamespace: PropTypes.string.isRequired,
-	selectedTemplate: PropTypes.object,
 	selectedTemplateClassName: PropTypes.string,
+	selectedTemplateHeadlessEndpoint: PropTypes.string,
+	selectedTemplateMapping: PropTypes.object,
 	templatesOptions: PropTypes.arrayOf(PropTypes.object),
 };
 
@@ -88,9 +126,10 @@ function getMappingFromTemplate(template) {
 }
 
 async function fireTemplateSelectionEvent(templateId) {
-	if (templateId === '0') {
+	if (templateId === NULL_TEMPLATE_VALUE) {
 		return Liferay.fire(TEMPLATE_SELECTED_EVENT, {
 			templateClassName: null,
+			templateHeadlessEndpoint: null,
 			templateMapping: null,
 		});
 	}
@@ -108,8 +147,13 @@ async function fireTemplateSelectionEvent(templateId) {
 
 	const template = await request.json();
 
+	const headlessEndpoint = template.policies.find(
+		(policy) => policy?.name === HEADLESS_ENDPOINT_POLICY_NAME
+	);
+
 	Liferay.fire(TEMPLATE_SELECTED_EVENT, {
 		templateClassName: template.internalClassName,
+		templateHeadlessEndpoint: headlessEndpoint?.value,
 		templateMapping: getMappingFromTemplate(template),
 	});
 }
