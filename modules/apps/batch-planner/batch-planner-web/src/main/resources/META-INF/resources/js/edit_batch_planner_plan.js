@@ -14,18 +14,34 @@
 
 import {fetch, openToast} from 'frontend-js-web';
 
-import {SCHEMA_SELECTED_EVENT} from './constants';
+import {
+	SCHEMA_SELECTED_EVENT,
+	TEMPLATE_DIRTY,
+	TEMPLATE_SELECTED_EVENT,
+} from './constants';
 
 const HEADERS = new Headers({
 	'content-type': 'application/json',
 	'x-csrf-token': window.Liferay.authToken,
 });
 
-function getOptionElement(label, schemaName, value) {
+function trimPackage(name) {
+	if (!name || name.lastIndexOf('.') < 0) {
+		return name;
+	}
+
+	return name.substr(name.lastIndexOf('.') + 1);
+}
+
+function getOptionElement(label, schemaName, selected, value) {
 	const optionElement = document.createElement('option');
 
 	optionElement.innerHTML = label;
 	optionElement.value = value;
+
+	if (selected) {
+		optionElement.selected = true;
+	}
 
 	if (schemaName) {
 		optionElement.setAttribute('schemaName', schemaName);
@@ -46,10 +62,43 @@ export default function ({namespace}) {
 		`#${namespace}taskItemDelegateName`
 	);
 
-	headlessEnpointSelect.addEventListener('change', async (event) => {
-		event.target.disabled = true;
+	Liferay.on(TEMPLATE_SELECTED_EVENT, async (event) => {
+		if (event.templateClassName && event.templateHeadlessEndpoint) {
+			const headlessTemplateOption = headlessEnpointSelect.querySelector(
+				`option[value='${event.templateHeadlessEndpoint}']`
+			);
+			headlessTemplateOption.selected = true;
+			await handleHeadlessSelectChange();
 
-		const headlessEnpoint = event.target.value;
+			const internalClassTemplateOption = internalClassNameSelect.querySelector(
+				`option[value='${event.templateClassName}']`
+			);
+			internalClassTemplateOption.selected = true;
+			await handleClassNameSelectChange();
+
+			var onChangeEvent = document.createEvent('CustomEvent');
+			onChangeEvent.initEvent('change', false, true);
+			internalClassTemplateOption.dispatchEvent(onChangeEvent);
+		}
+	});
+
+	headlessEnpointSelect.addEventListener(
+		'change',
+		handleHeadlessSelectChange
+	);
+
+	internalClassNameSelect.addEventListener(
+		'change',
+		handleClassNameSelectChange
+	);
+
+	async function handleHeadlessSelectChange(event) {
+		if (event) {
+			Liferay.fire(TEMPLATE_DIRTY);
+			event.target.disabled = true;
+		}
+
+		const headlessEnpoint = headlessEnpointSelect.value;
 
 		if (!headlessEnpoint) {
 			internalClassNameSelect.innerHTML = '';
@@ -70,7 +119,9 @@ export default function ({namespace}) {
 			const {components} = await response.json();
 			internalClassNameSelect.innerHTML = '';
 
-			internalClassNameSelect.appendChild(getOptionElement('', '', ''));
+			internalClassNameSelect.appendChild(
+				getOptionElement('', '', false, '')
+			);
 
 			const keys = Object.keys(components.schemas).sort();
 
@@ -88,6 +139,7 @@ export default function ({namespace}) {
 				const optionElement = getOptionElement(
 					trimPackage(className),
 					schemaName,
+					false,
 					className
 				);
 
@@ -109,16 +161,17 @@ export default function ({namespace}) {
 			console.error('Failed to fetch ' + error);
 		}
 		finally {
-			event.target.disabled = false;
+			if (event) {
+				event.target.disabled = false;
+			}
 		}
-	});
+	}
 
-	internalClassNameSelect.addEventListener(
-		'change',
-		handleClassNameSelectChange
-	);
+	async function handleClassNameSelectChange(event) {
+		if (event) {
+			Liferay.fire(TEMPLATE_DIRTY);
+		}
 
-	async function handleClassNameSelectChange() {
 		const headlessEnpointValue = headlessEnpointSelect.value;
 
 		const selectedOption =
@@ -134,7 +187,7 @@ export default function ({namespace}) {
 			schemaName || selectedOption.value
 		);
 
-		if (!headlessEnpointValue || !internalClassNameValue) {
+		if (!internalClassNameValue) {
 			Liferay.fire(SCHEMA_SELECTED_EVENT, {
 				schema: null,
 			});
@@ -168,13 +221,5 @@ export default function ({namespace}) {
 
 			console.error(`Failed to fetch ${error}`);
 		}
-	}
-
-	function trimPackage(name) {
-		if (!name || name.lastIndexOf('.') < 0) {
-			return name;
-		}
-
-		return name.substr(name.lastIndexOf('.') + 1);
 	}
 }

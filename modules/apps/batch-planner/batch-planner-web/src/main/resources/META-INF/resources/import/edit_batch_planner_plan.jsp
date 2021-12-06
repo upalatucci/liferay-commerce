@@ -29,7 +29,6 @@ renderResponse.setTitle((batchPlannerPlan == null) ? LanguageUtil.get(request, "
 <div class="container pt-4">
 	<form id="<portlet:namespace />fm" name="<portlet:namespace />fm">
 		<aui:input name="batchPlannerPlanId" type="hidden" value="<%= batchPlannerPlanId %>" />
-		<input class="form-control" id="<portlet:namespace />name" name="<portlet:namespace />name" type="hidden" />
 		<aui:input name="taskItemDelegateName" type="hidden" value="DEFAULT" />
 
 		<div class="card">
